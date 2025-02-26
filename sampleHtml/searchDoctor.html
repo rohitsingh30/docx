@@ -1,0 +1,210 @@
+<html>
+ <head>
+  <title>
+   Select a Doctor
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <style>
+   .tooltip {
+    position: relative;
+    display: inline-block;
+   }
+
+   .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 220px;
+    background-color: #f9f9f9;
+    color: #333;
+    text-align: left;
+    border-radius: 6px;
+    padding: 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+   }
+
+   .tooltip:hover .tooltiptext {
+    visibility: visible;
+   }
+  </style>
+  <script>
+   document.addEventListener('DOMContentLoaded', function () {
+    const availabilityElements = document.querySelectorAll('.availability');
+    const currentTime = new Date();
+    const currentDay = currentTime.getDay();
+    const currentHour = currentTime.getHours();
+
+    availabilityElements.forEach((element) => {
+     const availability = JSON.parse(element.getAttribute('data-availability'));
+     const todayAvailability = availability[currentDay];
+
+     if (todayAvailability) {
+      const [startHour, endHour] = todayAvailability.split('-').map((time) => parseInt(time.trim().split(' ')[0]));
+      if (currentHour >= startHour && currentHour < endHour) {
+       element.classList.add('text-green-500');
+       element.textContent = 'Available';
+       element.nextElementSibling.classList.remove('bg-gray-300', 'text-gray-500');
+       element.nextElementSibling.classList.add('bg-green-500', 'text-white');
+       element.nextElementSibling.disabled = false;
+      } else {
+       element.classList.add('text-red-500');
+       element.textContent = '';
+       element.nextElementSibling.classList.add('bg-gray-300', 'text-gray-500');
+       element.nextElementSibling.classList.remove('bg-green-500', 'text-white');
+       element.nextElementSibling.disabled = true;
+      }
+     } else {
+      element.classList.add('text-red-500');
+      element.textContent = '';
+      element.nextElementSibling.classList.add('bg-gray-300', 'text-gray-500');
+      element.nextElementSibling.classList.remove('bg-green-500', 'text-white');
+      element.nextElementSibling.disabled = true;
+     }
+    });
+   });
+  </script>
+ </head>
+ <body class="bg-white text-gray-900">
+  <div class="max-w-md mx-auto min-h-screen flex flex-col justify-between p-4">
+   <div>
+    <div class="flex justify-between items-center mb-4">
+     <span class="text-black text-lg">
+      9:41 AM
+     </span>
+     <div class="flex space-x-2">
+      <i class="fas fa-signal">
+      </i>
+      <i class="fas fa-wifi">
+      </i>
+      <i class="fas fa-battery-full">
+      </i>
+     </div>
+    </div>
+    <h1 class="text-2xl font-bold mb-4">
+     Select a Doctor
+    </h1>
+    <div class="relative mb-4">
+     <input class="w-full p-3 pl-10 rounded-full bg-gray-100 text-gray-500" placeholder="Search doctors by name or specialty" type="text"/>
+     <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500">
+     </i>
+    </div>
+    <div class="flex space-x-2 mb-4 overflow-x-auto">
+     <div class="flex-shrink-0">
+      <img alt="Cardiologist image" class="w-12 h-12 rounded-full object-cover" height="50" src="https://storage.googleapis.com/a1aa/image/XqaK2vMh6yP_WalWD5UMGLR5IgALUxN2QbDcBC-SWWg.jpg" width="50"/>
+      <p class="text-center text-xs text-blue-700 mt-1">
+       Cardiologist
+      </p>
+     </div>
+     <div class="flex-shrink-0">
+      <img alt="Dermatologist image" class="w-12 h-12 rounded-full object-cover" height="50" src="https://storage.googleapis.com/a1aa/image/cxUBQkE0vvY1a7obNYgOn9iDGur7YxD2hP2i4w-wSfo.jpg" width="50"/>
+      <p class="text-center text-xs text-blue-700 mt-1">
+       Dermatologist
+      </p>
+     </div>
+     <div class="flex-shrink-0">
+      <img alt="Placeholder image" class="w-12 h-12 rounded-full object-cover" height="50" src="https://storage.googleapis.com/a1aa/image/gIwqfgsN7zbTYqVrHOsicCbjtdhmhbnAxcslKCtTc0E.jpg" width="50"/>
+      <p class="text-center text-xs text-blue-700 mt-1">
+       Placeholder
+      </p>
+     </div>
+    </div>
+    <div class="flex space-x-4 mb-4">
+     <div class="w-1/2">
+      <img alt="Dr. Emily Clark image" class="w-full h-32 rounded-lg object-cover mb-2" height="150" src="https://storage.googleapis.com/a1aa/image/ULQjqqFBUltNV2RpnHUiOHJcqBMUvllxsrX5o911oJU.jpg" width="150"/>
+      <h2 class="text-lg font-semibold">
+       Dr. Emily Clark
+      </h2>
+      <p class="text-gray-500">
+       Cardiologist, 10 years experience
+      </p>
+      <p class="availability mt-2 inline-block" data-availability='["9 AM - 5 PM", "9 AM - 5 PM", "9 AM - 5 PM", "9 AM - 5 PM", "9 AM - 5 PM", "10 AM - 2 PM", ""]'>
+      </p>
+      <button class="w-full bg-green-500 text-white py-2 rounded-full mt-2">
+       Book Appointment
+      </button>
+      <button class="w-full bg-blue-200 text-blue-700 py-2 rounded-full mt-2">
+       Contact
+      </button>
+     </div>
+     <div class="w-1/2">
+      <img alt="Dr. John Doe image" class="w-full h-32 rounded-lg object-cover mb-2" height="150" src="https://storage.googleapis.com/a1aa/image/bnMtdb5im3ldnD9zwbeJyvRWSZFobW_wjF2AFTnV8KE.jpg" width="150"/>
+      <h2 class="text-lg font-semibold">
+       Dr. John Doe
+      </h2>
+      <p class="text-gray-500">
+       Dermatologist, 8 years experience
+      </p>
+      <p class="availability mt-2 inline-block" data-availability='["10 AM - 6 PM", "10 AM - 6 PM", "10 AM - 6 PM", "10 AM - 6 PM", "10 AM - 6 PM", "11 AM - 3 PM", ""]'>
+      </p>
+      <button class="w-full bg-gray-300 text-gray-500 py-2 rounded-full mt-2 flex items-center justify-center" disabled>
+       Book Appointment
+       <div class="tooltip inline-block ml-2">
+        <i class="fas fa-info-circle text-gray-500">
+        </i>
+        <div class="tooltiptext">
+         <h3 class="text-md font-semibold text-blue-700">
+          Availability
+         </h3>
+         <ul class="text-gray-700">
+          <li>
+           Monday: 10 AM - 6 PM
+          </li>
+          <li>
+           Tuesday: 10 AM - 6 PM
+          </li>
+          <li>
+           Wednesday: 10 AM - 6 PM
+          </li>
+          <li>
+           Thursday: 10 AM - 6 PM
+          </li>
+          <li>
+           Friday: 10 AM - 6 PM
+          </li>
+          <li>
+           Saturday: 11 AM - 3 PM
+          </li>
+          <li>
+           Sunday: Not Available
+          </li>
+         </ul>
+        </div>
+       </div>
+      </button>
+      <button class="w-full bg-blue-200 text-blue-700 py-2 rounded-full mt-2">
+       Contact
+      </button>
+     </div>
+    </div>
+   </div>
+   <div class="flex justify-around items-center border-t pt-2">
+    <div class="text-center">
+     <i class="fas fa-home text-blue-700">
+     </i>
+     <p class="text-xs text-blue-700">
+      Home
+     </p>
+    </div>
+    <div class="text-center">
+     <i class="fas fa-search text-gray-400">
+     </i>
+     <p class="text-xs text-gray-400">
+      Search
+     </p>
+    </div>
+    <div class="text-center">
+     <i class="fas fa-bookmark text-gray-400">
+     </i>
+     <p class="text-xs text-gray-400">
+      Saved
+     </p>
+    </div>
+   </div>
+  </div>
+ </body>
+</html>

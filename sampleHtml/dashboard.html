@@ -1,0 +1,101 @@
+<html>
+ <head>
+  <title>
+   Dashboard
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+   body {
+     font-family: 'Inter', sans-serif;
+   }
+  </style>
+ </head>
+ <body class="bg-gray-50 text-gray-900">
+  <div class="max-w-md mx-auto">
+   <!-- Status Bar -->
+   <div class="flex justify-between items-center px-4 py-2">
+    <span class="text-sm font-medium">
+     9:41 AM
+    </span>
+    <div class="flex space-x-1">
+     <i class="fas fa-signal text-gray-500"></i>
+     <i class="fas fa-wifi text-gray-500"></i>
+     <i class="fas fa-battery-full text-gray-500"></i>
+    </div>
+   </div>
+   <!-- Dashboard Header -->
+   <div class="px-4 py-4">
+    <h1 class="text-4xl font-bold text-gray-800">
+     Dashboard
+    </h1>
+   </div>
+   <!-- Main Content -->
+   <div class="px-4 py-2 space-y-6">
+    <!-- Upcoming Appointments and Generated Reports -->
+    <div class="flex space-x-4">
+     <div class="w-1/2">
+      <img alt="Upcoming appointment with Dr. Smith" class="rounded-lg shadow-md" height="200" src="https://storage.googleapis.com/a1aa/image/_HHH4qm3yc5YI6t3jwPltvKT3NIAGhZZ7X2r58Su4Rc.jpg" width="300"/>
+      <h2 class="text-lg font-semibold mt-2 text-gray-700">
+       Upcoming Appointment
+      </h2>
+      <p class="text-sm text-gray-500">
+       Next: Dr. Smith, Oct 20
+      </p>
+     </div>
+     <div class="w-1/2">
+      <img alt="Generated reports on health" class="rounded-lg shadow-md" height="200" src="https://storage.googleapis.com/a1aa/image/jzP6nTWghNH5vT3wxSE9hvyZepeAVGDHdkgtjRxREy4.jpg" width="300"/>
+      <h2 class="text-lg font-semibold mt-2 text-gray-700">
+       Generated Report
+      </h2>
+      <p class="text-sm text-gray-500">
+       Latest insights on your health
+      </p>
+     </div>
+    </div>
+    <!-- Updates -->
+    <div>
+     <h2 class="text-2xl font-bold text-gray-800">
+      Updates
+     </h2>
+     <div class="flex items-center space-x-4 mt-2 bg-white p-4 rounded-lg shadow-md">
+      <i class="fas fa-bell text-blue-600 text-xl"></i>
+      <div class="w-full">
+       <h3 class="text-lg font-semibold text-gray-700">
+        New Report Generated
+       </h3>
+       <p class="text-sm text-gray-500">
+        A new health report has been generated.
+       </p>
+      </div>
+     </div>
+    </div>
+    <!-- Button -->
+    <div class="space-y-2">
+     <button class="w-full py-3 bg-blue-600 text-white text-lg font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300">
+      Start a New Check
+     </button>
+    </div>
+   </div>
+   <!-- Navigation Bar -->
+   <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-md">
+    <div class="flex justify-around py-2">
+     <div class="text-center">
+      <i class="fas fa-home text-blue-600 text-xl"></i>
+      <p class="text-xs text-blue-600 font-medium">
+       Home
+      </p>
+     </div>
+     <div class="text-center">
+      <i class="fas fa-user text-gray-400 text-xl"></i>
+      <p class="text-xs text-gray-400 font-medium">
+       Profile
+      </p>
+     </div>
+    </div>
+   </div>
+  </div>
+ </body>
+</html>

@@ -1,0 +1,114 @@
+<html>
+<head>
+    <title>Patient Reports</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <script>
+        function toggleDetails(id, iconId) {
+            const element = document.getElementById(id);
+            const icon = document.getElementById(iconId);
+            element.classList.toggle('hidden');
+            icon.classList.toggle('fa-chevron-down');
+            icon.classList.toggle('fa-chevron-right');
+        }
+    </script>
+</head>
+<body class="bg-white text-gray-900">
+    <div class="max-w-md mx-auto p-4">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-4">
+            <span class="text-sm">9:41 AM</span>
+            <div class="flex space-x-2">
+                <i class="fas fa-signal"></i>
+                <i class="fas fa-wifi"></i>
+                <i class="fas fa-battery-full"></i>
+            </div>
+        </div>
+        <!-- Title -->
+        <h1 class="text-3xl font-bold mb-4">Patient Reports</h1>
+        <!-- Search Bar -->
+        <div class="relative mb-6">
+            <input type="text" placeholder="Search reports" class="w-full p-3 pl-10 rounded-full bg-gray-100 text-gray-500"/>
+            <i class="fas fa-search absolute left-4 top-3 text-gray-500"></i>
+        </div>
+        <!-- Patient Reports List -->
+        <div class="space-y-4">
+            <div class="p-4 bg-white rounded-lg shadow-md">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center cursor-pointer" onclick="toggleDetails('details1', 'icon1')">
+                        <i id="icon1" class="fas fa-chevron-right mr-2 text-blue-700"></i>
+                        <div>
+                            <h2 class="text-lg font-semibold text-blue-700">John Doe</h2>
+                            <p class="text-gray-500">Report Date: 2023-10-01</p>
+                        </div>
+                    </div>
+                    <span class="text-gray-500 font-semibold">Submitted</span>
+                </div>
+                <div id="details1" class="mt-2 hidden">
+                    <p class="text-gray-700">Condition: High Risk</p>
+                    <p class="text-gray-700">Details: Patient has a persistent cough and high fever.</p>
+                </div>
+            </div>
+            <div class="p-4 bg-white rounded-lg shadow-md">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center cursor-pointer" onclick="toggleDetails('details2', 'icon2')">
+                        <i id="icon2" class="fas fa-chevron-right mr-2 text-blue-700"></i>
+                        <div>
+                            <h2 class="text-lg font-semibold text-blue-700">Jane Smith</h2>
+                            <p class="text-gray-500">Report Date: 2023-09-28</p>
+                        </div>
+                    </div>
+                    <span class="text-yellow-500 font-semibold">In Progress</span>
+                </div>
+                <div id="details2" class="mt-2 hidden">
+                    <p class="text-gray-700">Condition: Moderate Risk</p>
+                    <p class="text-gray-700">Details: Patient is under observation for mild symptoms.</p>
+                    <p class="text-gray-700">ETA: 2 days</p>
+                </div>
+            </div>
+            <div class="p-4 bg-blue-100 rounded-lg shadow-md">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-lg font-semibold text-blue-700">Alice Johnson</h2>
+                        <p class="text-gray-500">Report Date: 2023-09-25</p>
+                    </div>
+                    <span class="text-blue-700 font-semibold">Reviewed</span>
+                </div>
+            </div>
+            <div class="p-4 bg-white rounded-lg shadow-md">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center cursor-pointer" onclick="toggleDetails('details4', 'icon4')">
+                        <i id="icon4" class="fas fa-chevron-right mr-2 text-blue-700"></i>
+                        <div>
+                            <h2 class="text-lg font-semibold text-blue-700">Bob Brown</h2>
+                            <p class="text-gray-500">Report Date: 2023-09-20</p>
+                        </div>
+                    </div>
+                    <span class="text-gray-500 font-semibold">Submitted</span>
+                </div>
+                <div id="details4" class="mt-2 hidden">
+                    <p class="text-gray-700">Condition: High Risk</p>
+                    <p class="text-gray-700">Details: Patient has severe symptoms and requires immediate attention.</p>
+                </div>
+            </div>
+            <div class="p-4 bg-white rounded-lg shadow-md">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center cursor-pointer" onclick="toggleDetails('details5', 'icon5')">
+                        <i id="icon5" class="fas fa-chevron-right mr-2 text-blue-700"></i>
+                        <div>
+                            <h2 class="text-lg font-semibold text-blue-700">Charlie Davis</h2>
+                            <p class="text-gray-500">Report Date: 2023-09-15</p>
+                        </div>
+                    </div>
+                    <span class="text-yellow-500 font-semibold">In Progress</span>
+                </div>
+                <div id="details5" class="mt-2 hidden">
+                    <p class="text-gray-700">Condition: Moderate Risk</p>
+                    <p class="text-gray-700">Details: Patient is being monitored for potential complications.</p>
+                    <p class="text-gray-700">ETA: 3 days</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
