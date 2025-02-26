@@ -1,13 +1,14 @@
 import React from 'react';
+import { commonStyles } from '../../user/src/styles/commonStyles'; // Import common styles from user directory
 
-const ReportReview: React.FC = () => {
+const FinalReportReviewFinal: React.FC = () => {
     const handleConfirm = () => {
         // Logic to confirm the review
     };
 
     return (
-        <div>
-            <h1>Report Review</h1>
+        <div style={commonStyles.container}> {/* Apply common container style */}
+            <h1 style={commonStyles.headerTitle}>Final Report Review Final</h1>
             <section>
                 <h2>Diagnosis</h2>
                 {/* Display diagnosis details */}
@@ -24,9 +25,11 @@ const ReportReview: React.FC = () => {
                 <h2>Dosages</h2>
                 {/* Display dosages */}
             </section>
-            <button onClick={handleConfirm}>Confirm Review</button>
+            <button style={commonStyles.primaryButton} onClick={handleConfirm}>
+                Confirm Review
+            </button>
         </div>
     );
 };
 
-export default ReportReview;
+export default FinalReportReviewFinal;
