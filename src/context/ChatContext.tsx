@@ -21,7 +21,7 @@ type ChatContextType = {
   generateReport: () => HealthReport;
 };
 
-const ChatContext = createContext<ChatContextType | undefined>(undefined);
+export const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [symptoms, setSymptoms] = useState<Symptom[]>([]);

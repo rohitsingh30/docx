@@ -1,15 +1,22 @@
 import { StatusBar } from 'expo-status-bar';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AuthProvider } from './src/context/AuthContext';
 import { ChatProvider } from './src/context/ChatContext';
-import AppNavigator from './src/navigation/AppNavigator';
+import RootNavigator from './src/navigation/AppNavigator';
+import { View } from 'react-native';
+import { theme } from './src/styles/theme';
 
 export default function App() {
   return (
-    <AuthProvider>
-      <ChatProvider>
-        <StatusBar style="auto" />
-        <AppNavigator />
-      </ChatProvider>
-    </AuthProvider>
+    <SafeAreaProvider>
+      <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+        <StatusBar style="dark" />
+        <AuthProvider>
+          <ChatProvider>
+            <RootNavigator />
+          </ChatProvider>
+        </AuthProvider>
+      </View>
+    </SafeAreaProvider>
   );
 }

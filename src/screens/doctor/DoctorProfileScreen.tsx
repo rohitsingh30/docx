@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../../navigation/types';
-import { styles } from './styles/DoctorProfileScreenStyles';
+import { Doctor, RootStackParamList } from '../../navigation/types';
+import { colors, spacing, typography, commonStyles } from '../../styles/commonStyles';
 
 type DoctorProfileRouteProp = RouteProp<RootStackParamList, 'DoctorProfile'>;
 
@@ -43,7 +43,7 @@ const DoctorProfileScreen = () => {
   const doctor = mockDoctorData[doctorId as keyof typeof mockDoctorData];
 
   return (
-    <View style={styles.container}>
+    <View style={commonStyles.container}>
       <View style={styles.profileHeader}>
         <Image 
           source={{ uri: doctor.image }}
@@ -60,14 +60,80 @@ const DoctorProfileScreen = () => {
         <Text style={styles.sectionTitle}>About</Text>
         <Text style={styles.description}>{doctor.about}</Text>
         <TouchableOpacity 
-          style={styles.bookButton}
-          onPress={() => navigation.navigate('AppointmentBooking')}
+          style={commonStyles.primaryButton}
+          onPress={() => navigation.navigate('AppointmentBooking', {
+            doctor: doctor as unknown as Doctor,
+          })}
         >
-          <Text style={styles.buttonText}>Book Appointment</Text>
+          <Text style={commonStyles.primaryButtonText}>Book Appointment</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  profileHeader: {
+    alignItems: 'center',
+    marginBottom: spacing.large,
+  },
+  profileImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    marginBottom: spacing.medium,
+  },
+  name: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: colors.text,
+    marginBottom: spacing.xxs,
+  },
+  specialty: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    marginBottom: spacing.xs,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.medium,
+  },
+  rating: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    marginRight: spacing.medium,
+  },
+  experience: {
+    fontSize: 16,
+    color: colors.textSecondary,
+  },
+  details: {
+    flex: 1,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: colors.text,
+    marginBottom: spacing.xs,
+  },
+  description: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    lineHeight: 24,
+    marginBottom: spacing.large,
+  },
+  bookButton: {
+    backgroundColor: colors.primary,
+    paddingVertical: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: colors.textInverted,
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});
 
 export default DoctorProfileScreen;

@@ -1,9 +1,19 @@
 import React, { useContext } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
-import AuthContext from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
+
+  if (!authContext) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Auth context is not available</Text>
+      </View>
+    );
+  }
+
+  const { user, loading } = authContext;
 
   if (loading) {
     return (

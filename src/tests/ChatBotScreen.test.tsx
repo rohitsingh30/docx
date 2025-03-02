@@ -6,16 +6,17 @@ import { ChatContext } from '../context/ChatContext';
 // Mock the ChatContext
 const mockAddSymptom = jest.fn();
 const mockGenerateReport = jest.fn(() => ({
+  symptoms: [],
+  possibleConditions: [],
+  recommendations: ['Test recommendation'],
   shouldSeeDoctor: false,
-  summary: 'Test summary',
-  recommendations: ['Test recommendation']
 }));
 
 const mockChatContextValue = {
   addSymptom: mockAddSymptom,
   generateReport: mockGenerateReport,
   symptoms: [],
-  clearSymptoms: jest.fn()
+  clearSymptoms: jest.fn(),
 };
 
 describe('ChatBotScreen', () => {

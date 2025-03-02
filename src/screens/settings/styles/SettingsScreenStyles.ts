@@ -9,8 +9,8 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
+    color: '#333333',
     marginBottom: 24,
-    color: '#1e293b',
   },
   settingItem: {
     flexDirection: 'row',
@@ -18,10 +18,10 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: '#e2e8f0',
   },
   settingText: {
     fontSize: 16,
-    color: '#1e293b',
+    color: '#2d3748',
   },
 });

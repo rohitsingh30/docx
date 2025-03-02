@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, SafeAreaView } from 'react-native';
+import { View, Text, TouchableOpacity, Image, SafeAreaView, TextStyle } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigation/types';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { colors, fontSizes, spacing, commonStyles } from '../../styles/commonStyles';
+import { colors, spacing, commonStyles } from '../../styles/commonStyles';
+// import { styles } from './styles/ReportDetailScreenStyles';
 
 const ReportDetailScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();

@@ -1,13 +1,14 @@
 import { StyleSheet } from 'react-native';
+import { colors, spacing, theme } from '../../../styles/commonStyles';
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.colors.background,
   },
   content: {
     flex: 1,
-    padding: 24,
+    padding: spacing.large,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -15,24 +16,24 @@ export const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#48bb78',
+    backgroundColor: colors.success,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 24,
   },
   icon: {
     fontSize: 40,
-    color: '#ffffff',
+    color: colors.textInverted,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2d3748',
+    color: colors.text,
     marginBottom: 24,
     textAlign: 'center',
   },
   card: {
-    backgroundColor: '#f7fafc',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 20,
     width: '100%',
@@ -49,7 +50,7 @@ export const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#2d3748',
+    color: colors.text,
     marginBottom: 16,
   },
   detailRow: {
@@ -59,46 +60,48 @@ export const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    color: '#718096',
+    color: colors.textSecondary,
   },
   value: {
     fontSize: 16,
-    color: '#2d3748',
+    color: colors.text,
     fontWeight: '500',
   },
   message: {
     fontSize: 14,
-    color: '#718096',
+    color: colors.textSecondary,
     textAlign: 'center',
     marginBottom: 32,
     paddingHorizontal: 20,
   },
   buttonContainer: {
     width: '100%',
+    marginTop: spacing.large,
   },
   homeButton: {
-    backgroundColor: '#4299e1',
+    backgroundColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 8,
     alignItems: 'center',
   },
   confirmationText: {
-    fontSize: 18,
+    fontSize: 24,
+    fontWeight: '600',
+    color: colors.primary,
     textAlign: 'center',
-    marginBottom: 32,
-    color: '#2D3748',
+    marginBottom: spacing.xl,
   },
   button: {
-    backgroundColor: '#4299E1',
-    padding: 16,
+    backgroundColor: colors.primary,
+    paddingVertical: spacing.medium,
+    paddingHorizontal: spacing.large,
     borderRadius: 8,
-    marginBottom: 16,
+    marginBottom: spacing.medium,
     alignItems: 'center',
   },
   buttonText: {
-    color: '#ffffff',
+    color: colors.textInverted,
     fontSize: 16,
     fontWeight: '600',
   },
-
 });

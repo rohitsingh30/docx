@@ -1,16 +1,13 @@
 import React, { useState, useEffect, useRef, ErrorInfo } from 'react';
-import { View, ScrollView, SafeAreaView, Platform, Animated, Easing, Text, TouchableOpacity } from 'react-native';
-import BackButton from '../../components/common/BackButton';
+import { View, ScrollView, SafeAreaView, Animated, Easing, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Header from '../../components/common/Header';
-import { colors, fontSizes, spacing, commonStyles } from '../../styles/commonStyles';
+import { colors, spacing, commonStyles } from '../../styles/commonStyles';
 import Tts from 'react-native-tts';
-import { MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/types';
 import { useChatContext } from '../../context/ChatContext';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { styles } from './styles/ChatBotScreenStyles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Message = {
   id: string;
@@ -54,12 +51,12 @@ const TypingIndicator = () => {
   }, []);
 
   return (
-    <View style={styles.typingIndicator}>
+    <View style={commonStyles.typingIndicator}>
       {[dot1, dot2, dot3].map((dot, index) => (
         <Animated.View
           key={index}
           style={[
-            styles.typingDot,
+            commonStyles.typingDot,
             {
               transform: [
                 {
@@ -94,8 +91,8 @@ class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasErr
   render() {
     if (this.state.hasError) {
       return (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Something went wrong. Please try again later.</Text>
+        <View style={commonStyles.centeredContent}>
+          <Text style={commonStyles.errorText}>Something went wrong. Please try again later.</Text>
         </View>
       );
     }
@@ -130,19 +127,44 @@ const ChatBotScreen = () => {
     }
   };
 
-  const [messages, setMessages] = useState<Message[]>(() => {
-    // Try to load messages from cache
-    const cachedMessages = localStorage.getItem('chatMessages');
-    return cachedMessages ? JSON.parse(cachedMessages) : [];
-  });
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loadingMessages, setLoadingMessages] = useState(true);
+
+  // Load messages from AsyncStorage on component mount
+  useEffect(() => {
+    const loadMessages = async () => {
+      try {
+        const cachedMessages = await AsyncStorage.getItem('chatMessages');
+        if (cachedMessages) {
+          setMessages(JSON.parse(cachedMessages));
+        }
+      } catch (error) {
+        console.error('Failed to load messages:', error);
+      } finally {
+        setLoadingMessages(false);
+      }
+    };
+
+    loadMessages();
+  }, []);
+
+  // Cache messages whenever they change
+  useEffect(() => {
+    const saveMessages = async () => {
+      try {
+        await AsyncStorage.setItem('chatMessages', JSON.stringify(messages));
+      } catch (error) {
+        console.error('Failed to save messages:', error);
+      }
+    };
+
+    saveMessages();
+  }, [messages]);
+
   const [currentStage, setCurrentStage] = useState<'initial' | 'symptoms' | 'severity' | 'duration' | 'report'>('initial');
   const [isTyping, setIsTyping] = useState(false);
   const [selectedSuggestions, setSelectedSuggestions] = useState<{[key: string]: string}>({});
 
-  // Cache messages whenever they change
-  useEffect(() => {
-    localStorage.setItem('chatMessages', JSON.stringify(messages));
-  }, [messages]);
   const scrollViewRef = useRef<ScrollView>(null);
 
   useEffect(() => {
@@ -181,17 +203,22 @@ const ChatBotScreen = () => {
     }, 1500);
   };
 
-  const clearCache = () => {
-    localStorage.removeItem('chatMessages');
-    setMessages([]);
-    setSelectedSuggestions({});
+  const clearCache = async () => {
+    try {
+      await AsyncStorage.removeItem('chatMessages');
+      setMessages([]);
+      setSelectedSuggestions({});
+    } catch (error) {
+      console.error('Failed to clear cache:', error);
+    }
   };
 
   const handleSuggestionPress = async (suggestion: string) => {
+    setIsTyping(true);
     const messageId = messages[messages.length - 1]?.id;
     if (!messageId) return;
 
-    // Update selected suggestions
+    // Update selected suggestions and set typing state
     setSelectedSuggestions(prev => ({
       ...prev,
       [messageId]: suggestion
@@ -215,6 +242,7 @@ const ChatBotScreen = () => {
     // Handle View Analysis click
     if (suggestion === 'View Analysis') {
       const report = generateReport();
+      setIsTyping(false);
       navigation.navigate('MedicalRecords', { report: report });
       return;
     }
@@ -227,7 +255,7 @@ const ChatBotScreen = () => {
       });
     }
 
-    // Handle different conversation stages
+    // Handle different conversation stages and set typing state
     switch (currentStage) {
       case 'initial':
         addBotMessage({
@@ -270,6 +298,7 @@ const ChatBotScreen = () => {
           setCurrentStage('initial');
         } else {
           const report = generateReport();
+          setIsTyping(false);
           addBotMessage({
             text: "I've analyzed your symptoms and generated a report. What would you like to do?",
             suggestions: report.shouldSeeDoctor ? 
@@ -296,63 +325,37 @@ const ChatBotScreen = () => {
 
   return (
     <ErrorBoundary>
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.container}>
+      <SafeAreaView style={commonStyles.safeArea}>
+        <View style={commonStyles.chatContainer}>
           <Header title="AI Health Assistant" />
-          
           <ScrollView
             ref={scrollViewRef}
-            style={styles.section}
-            contentContainerStyle={styles.chatContent}
-            showsVerticalScrollIndicator={false}
-          >
-
-          {messages.map(message => (
-            <View
-              key={message.id}
-              style={[
-                styles.section,
-                message.sender === 'user' ? styles.userMessage : styles.botMessage
-              ]}
-            >
-              <Text style={[
-                styles.messageText,
-                message.sender === 'user' && styles.userMessageText
+            contentContainerStyle={commonStyles.chatContent}
+            style={commonStyles.chat}
+          > 
+            {messages.map((message, index) => (
+              <View key={message.id} style={[
+                commonStyles.message,
+                message.sender === 'bot' ? commonStyles.botMessage : commonStyles.userMessage
               ]}>
-                {message.text}
-              </Text>
-              
-              {message.suggestions && (
-                <View style={styles.suggestionsContainer}>
-                  {message.suggestions.map((suggestion, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      style={[
-                        styles.suggestionButton,
-                        selectedSuggestions[message.id] && selectedSuggestions[message.id] !== suggestion && styles.disabledSuggestion
-                      ]}
-                      onPress={() => handleSuggestionPress(suggestion)}
-                      disabled={!!selectedSuggestions[message.id]}
-                    >
-                      <Text style={[
-                        styles.suggestionText,
-                        (message.answeredOptions?.includes(suggestion) || selectedSuggestions[message.id]) && styles.answeredSuggestion
-                      ]}>
-                        {suggestion}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
-            </View>
-          ))}
-          {isTyping && <TypingIndicator />}
-          <View style={styles.bottomPadding} />
-        </ScrollView>
+                <Text style={commonStyles.messageText}>{message.text}</Text>
+                {message.suggestions && message.suggestions.map(suggestion => (
+                  <TouchableOpacity
+                    key={suggestion}
+                    style={commonStyles.suggestion}
+                    onPress={() => handleSuggestionPress(suggestion)}
+                  >
+                    <Text style={commonStyles.suggestionText}>{suggestion}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            ))}
+            {isTyping && <TypingIndicator />}
+          </ScrollView>
         </View>
       </SafeAreaView>
     </ErrorBoundary>
   );
-};
+}
 
 export default ChatBotScreen;
