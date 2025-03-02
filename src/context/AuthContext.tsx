@@ -1,68 +1,106 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContextType, User, UserType } from '../types/types';
 
-type User = {
-  id: string;
-  name: string;
-  email: string;
-  userType: 'doctor' | 'patient';
-};
+export const AuthContext = createContext<AuthContextType>({
+  user: null,
+  userType: null,
+  isLoading: true,
+  login: async () => {},
+  logout: async () => {},
+  register: async () => {},
+});
 
-type AuthContextType = {
-  user: User | null;
-  loading: boolean;
-  login: (user: User) => Promise<void>;
-  logout: () => void;
-};
-
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
+export const AuthProvider: React.FC<{children: ReactNode}> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [userType, setUserType] = useState<UserType>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Check if user is logged in
     const loadUser = async () => {
-      const storedUser = await AsyncStorage.getItem('user');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
+      try {
+        const userData = await AsyncStorage.getItem('user');
+        if (userData) {
+          const parsedUser = JSON.parse(userData);
+          setUser(parsedUser);
+          setUserType(parsedUser.type);
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      } finally {
+        setIsLoading(false);
       }
-      setLoading(false);
     };
 
     loadUser();
   }, []);
 
-  const login = async (user: User) => {
-    await AsyncStorage.setItem('user', JSON.stringify(user));
-    setUser(user);
+  const login = async (userData: any) => {
+    try {
+      // In a real app, you would validate credentials with your API
+      const userInfo: User = {
+        id: userData.id || '123',
+        email: userData.email,
+        name: userData.name,
+        type: userData.type || 'user', // Default to 'user' if not specified
+      };
+
+      await AsyncStorage.setItem('user', JSON.stringify(userInfo));
+      setUser(userInfo);
+      setUserType(userInfo.type);
+    } catch (error) {
+      console.error('Error during login:', error);
+      throw error;
+    }
   };
 
   const logout = async () => {
-    await AsyncStorage.removeItem('user');
-    setUser(null);
+    try {
+      await AsyncStorage.removeItem('user');
+      setUser(null);
+      setUserType(null);
+    } catch (error) {
+      console.error('Error during logout:', error);
+      throw error;
+    }
+  };
+
+  const register = async (userData: any) => {
+    try {
+      // In a real app, you would send registration data to your API
+      const userInfo: User = {
+        id: userData.id || String(Date.now()),
+        email: userData.email,
+        name: userData.name,
+        type: userData.type || 'user', // Default to 'user' if not specified
+      };
+
+      await AsyncStorage.setItem('user', JSON.stringify(userInfo));
+      setUser(userInfo);
+      setUserType(userInfo.type);
+    } catch (error) {
+      console.error('Error during registration:', error);
+      throw error;
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
-      {loading ? (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" />
-        </View>
-      ) : (
-        children
-      )}
+    <AuthContext.Provider
+      value={{
+        user,
+        userType,
+        isLoading,
+        login,
+        logout,
+        register,
+      }}
+    >
+      {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuthContext = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuthContext must be used within an AuthProvider');
-  }
-  return context;
+export const useAuth = () => {
+  return React.useContext(AuthContext);
 };
-
-export default AuthContext;

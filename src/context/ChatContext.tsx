@@ -1,18 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-
-type Symptom = {
-  id: string;
-  name: string;
-  severity: number;
-  duration: string;
-};
-
-type HealthReport = {
-  symptoms: Symptom[];
-  possibleConditions: string[];
-  recommendations: string[];
-  shouldSeeDoctor: boolean;
-};
+import { Symptom, HealthReport } from '../types/types';
 
 type ChatContextType = {
   symptoms: Symptom[];
@@ -40,6 +27,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     
     // This is where you'd integrate with a real AI model
     const report: HealthReport = {
+      title: symptoms[0]?.name ? `${symptoms[0].name} Report` : 'Health Report',
       symptoms,
       possibleConditions: symptoms.map(s => `Possible condition related to ${s.name}`),
       recommendations: [

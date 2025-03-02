@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import ChatBotScreen from '../screens/chat/ChatBotScreen';
+import ChatBotScreen from '../components/screens/user/ChatBotScreen';
 import { ChatContext } from '../context/ChatContext';
 
 // Mock the ChatContext

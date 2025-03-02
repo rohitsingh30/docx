@@ -1,4 +1,25 @@
-// Common types for navigation
+import { RouteProp } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+
+// Common types for the application
+
+export type UserType = 'user' | 'doctor' | null;
+
+export type AuthContextType = {
+  user: User | null;
+  userType: UserType;
+  isLoading: boolean;
+  login: (userData: any) => Promise<void>;
+  logout: () => Promise<void>;
+  register: (userData: any) => Promise<void>;
+};
+
+export type User = {
+  id: string;
+  email: string;
+  name: string;
+  type: UserType;
+};
 
 export type Symptom = {
   id: string;
@@ -68,7 +89,7 @@ export type Appointment = {
   notes?: string;
 };
 
-// Auth Stack Navigator types
+// Navigation types
 export type AuthStackParamList = {
   Login: undefined;
   SignUp: undefined;
@@ -76,7 +97,6 @@ export type AuthStackParamList = {
   ResetPassword: { token: string };
 };
 
-// User Stack Navigator types
 export type UserStackParamList = {
   Dashboard: undefined;
   ChatBot: undefined;
@@ -91,7 +111,6 @@ export type UserStackParamList = {
   Profile: undefined;
 };
 
-// Doctor specific navigation types
 export type DoctorStackParamList = {
   DoctorDashboard: undefined;
   ReportVerification: undefined;
@@ -106,5 +125,28 @@ export type DoctorStackParamList = {
   ConsultationRequestDetail: { requestId: string };
 };
 
-// Combined root stack type for app-wide navigation
 export type RootStackParamList = AuthStackParamList & UserStackParamList & DoctorStackParamList;
+
+// Common navigation prop type
+export type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+// Add navigation types specifically for screens in their new locations
+export type NavigationScreenProps = {
+  auth: {
+    Login: typeof import('../components/common/LoginScreen').default;
+    SignUp: typeof import('../components/auth/SignUpScreen').default;
+    ForgotPassword: typeof import('../components/auth/ForgotPasswordScreen').default;
+    ResetPassword: typeof import('../components/auth/ResetPasswordScreen').default;
+  };
+  user: {
+    Dashboard: typeof import('../components/screens/user/DashboardScreen').default;
+    ChatBot: typeof import('../components/screens/user/ChatBotScreen').default;
+    DoctorSearch: typeof import('../components/screens/user/DoctorSearchScreen').default;
+    // ...other user screens
+  };
+  doctor: {
+    DoctorDashboard: typeof import('../components/screens/doctor/DoctorDashboardScreen').default;
+    ReportVerification: typeof import('../components/screens/doctor/ReportVerificationScreen').default;
+    // ...other doctor screens
+  };
+};

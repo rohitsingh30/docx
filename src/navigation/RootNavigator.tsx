@@ -1,20 +1,19 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { useAuth } from '../hooks/useAuth';
-import UserNavigator from './UserNavigator';
-import DoctorNavigator from './DoctorNavigator';
-import AuthNavigator from '../screens/auth/AuthNavigator';
+import { createStackNavigator } from '@react-navigation/stack';
+import UserNavigator from '../components/user/UserNavigator';
+import DoctorNavigator from '../components/doctor/DoctorNavigator';
+import { RootStackParamList } from '../types/NavigationTypes'; // Ensure the types are imported
+
+const Stack = createStackNavigator<RootStackParamList>();
 
 const RootNavigator = () => {
-  const { user, userType } = useAuth();
-
   return (
     <NavigationContainer>
-      {!user ? (
-        <AuthNavigator />
-      ) : (
-        userType === 'doctor' ? <DoctorNavigator /> : <UserNavigator />
-      )}
+      <Stack.Navigator>
+        <Stack.Screen name="User" component={UserNavigator} />
+        <Stack.Screen name="Doctor" component={DoctorNavigator} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 };

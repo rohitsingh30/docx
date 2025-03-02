@@ -11,7 +11,6 @@ export type Symptom = {
 export type HealthReport = {
   id?: string;
   patientId?: string;
-  title: string;
   symptoms: Symptom[];
   possibleConditions: string[];
   recommendations: string[];
@@ -54,57 +53,38 @@ export type Patient = {
   image?: string;
 };
 
-export type Appointment = {
-  id: string;
-  doctorId: string;
-  patientId: string;
-  doctorName: string;
-  patientName: string;
-  date: string;
-  time: string;
-  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
-  type: 'in-person' | 'video';
-  reason: string;
-  notes?: string;
-};
-
-// Auth Stack Navigator types
-export type AuthStackParamList = {
+// Root Stack Navigator types
+export type RootStackParamList = {
   Login: undefined;
   SignUp: undefined;
-  ForgotPassword: undefined;
-  ResetPassword: { token: string };
-};
-
-// User Stack Navigator types
-export type UserStackParamList = {
   Dashboard: undefined;
   ChatBot: undefined;
   DoctorSearch: undefined;
   DoctorProfile: { doctorId: string };
-  AppointmentBooking: { doctor?: Doctor };
-  AppointmentConfirmation: { appointmentId: string };
-  AppointmentList: undefined;
-  AppointmentDetail: { appointmentId: string };
+  AppointmentBooking: { doctor?: { id: string; name: string; specialty: string } };
+  AppointmentConfirmation: undefined;
   MedicalRecords: { report?: HealthReport };
   ReportDetail: { reportId: string; isReviewed?: boolean };
-  Profile: undefined;
+  ForgotPassword: undefined;
+  ResetPassword: { token: string };
 };
 
 // Doctor specific navigation types
 export type DoctorStackParamList = {
   DoctorDashboard: undefined;
   ReportVerification: undefined;
-  ReportDetail: { reportId: string };
   AppointmentManagement: undefined;
-  AppointmentDetail: { appointmentId: string };
   AvailabilitySettings: undefined;
   ConsultationSettings: undefined;
   DoctorProfile: { doctorId: string };
   DoctorChat: { chatId: string };
-  ConsultationRequests: undefined;
-  ConsultationRequestDetail: { requestId: string };
+  PaymentHistory: undefined;
 };
 
-// Combined root stack type for app-wide navigation
-export type RootStackParamList = AuthStackParamList & UserStackParamList & DoctorStackParamList;
+// Auth specific navigation types
+export type AuthStackParamList = {
+  Login: undefined;
+  SignUp: undefined;
+  ForgotPassword: undefined;
+  ResetPassword: { token: string };
+};

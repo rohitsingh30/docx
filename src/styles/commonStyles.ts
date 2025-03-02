@@ -21,20 +21,23 @@ export const colors = {
   disabled: theme.colors.disabled,
   shadow: '#000000',
   lightText: theme.colors.textTertiary,
-  typingDot: theme.colors.typingDot,
-  botMessageBackground: theme.colors.botMessageBackground,
-  userMessageBackground: theme.colors.userMessageBackground,
-  suggestionBackground: theme.colors.suggestionBackground,
-  suggestionText: theme.colors.suggestionText,
-  errorText: theme.colors.errorText,
+  typingDot: theme.colors.primary,
+  botMessageBackground: theme.colors.surface,
+  userMessageBackground: theme.colors.primaryLight,
+  suggestionBackground: theme.colors.surface,
+  suggestionText: theme.colors.primary,
+  errorText: theme.colors.error,
 };
 
 // Spacing
 export const spacing = {
   xxs: theme.spacing.xxs,
   xs: theme.spacing.xs,
+  sm: theme.spacing.sm,
   small: theme.spacing.sm,
+  md: theme.spacing.md,
   medium: theme.spacing.md,
+  lg: theme.spacing.lg,
   large: theme.spacing.lg,
   xl: theme.spacing.xl,
   xxl: theme.spacing.xxl,
@@ -68,51 +71,7 @@ export const typography = {
 
 // Common component styles
 export const commonStyles = StyleSheet.create({
-  typingIndicator: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: spacing.small,
-  },
-  typingDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.typingDot,
-    marginHorizontal: 4,
-  },
-  chatContent: {
-    padding: spacing.medium,
-  },
-  chat: {
-    flex: 1,
-  },
-  message: {
-    marginBottom: spacing.medium,
-    padding: spacing.medium,
-    borderRadius: spacing.small,
-  },
-  botMessage: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.botMessageBackground,
-  },
-  userMessage: {
-    alignSelf: 'flex-end',
-    backgroundColor: colors.userMessageBackground,
-  },
-  messageText: {
-    color: colors.text,
-  },
-  suggestion: {
-    marginTop: spacing.small,
-    padding: spacing.small,
-    borderRadius: spacing.small,
-    backgroundColor: colors.suggestionBackground,
-  },
-  suggestionText: {
-    color: colors.suggestionText,
-  },
-  // Layout
+  // Core layouts
   container: {
     flex: 1,
     backgroundColor: colors.background,
@@ -123,6 +82,10 @@ export const commonStyles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    padding: spacing.medium,
   },
   centeredContent: {
     flex: 1,
@@ -329,14 +292,13 @@ export const commonStyles = StyleSheet.create({
   chatContainer: {
     flex: 1,
     backgroundColor: colors.background,
-    padding: spacing.medium,
   },
   messageContainer: {
     marginBottom: spacing.medium,
     maxWidth: '85%',
     borderRadius: 16,
     padding: spacing.medium,
-    backgroundColor: colors.background,
+    backgroundColor: colors.surface,
     ...Platform.select({
       ios: {
         shadowColor: colors.shadow,
@@ -348,6 +310,46 @@ export const commonStyles = StyleSheet.create({
         elevation: 3,
       },
     }),
+  },
+  botMessage: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.botMessageBackground,
+  },
+  userMessage: {
+    alignSelf: 'flex-end',
+    backgroundColor: colors.userMessageBackground,
+  },
+  messageText: {
+    color: colors.text,
+    fontSize: 16,
+  },
+  userMessageText: {
+    color: colors.text,
+  },
+  suggestionsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: spacing.small,
+  },
+  suggestionButton: {
+    backgroundColor: colors.suggestionBackground,
+    paddingVertical: spacing.small,
+    paddingHorizontal: spacing.medium,
+    borderRadius: 20,
+    marginRight: spacing.small,
+    marginBottom: spacing.small,
+    borderWidth: 1,
+    borderColor: colors.primary,
+  },
+  suggestionText: {
+    color: colors.suggestionText,
+    fontSize: 14,
+  },
+  disabledSuggestion: {
+    opacity: 0.5,
+  },
+  answeredSuggestion: {
+    fontWeight: 'bold',
   },
   
   // Section styles
@@ -388,7 +390,359 @@ export const commonStyles = StyleSheet.create({
     color: colors.textInverted,
     fontSize: 16,
     fontWeight: '600',
-  }
+  },
+  
+  // Login styles
+  loginScrollContainer: {
+    flexGrow: 1,
+    padding: spacing.large,
+    justifyContent: 'center',
+  },
+  logoContainer: {
+    alignItems: 'center',
+    marginBottom: spacing.large,
+  },
+  appName: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: colors.primary,
+    marginBottom: spacing.small,
+  },
+  tagline: {
+    fontSize: 16,
+    color: colors.textSecondary,
+  },
+  formContainer: {
+    marginVertical: spacing.large,
+  },
+  userTypeContainer: {
+    marginTop: spacing.medium,
+    marginBottom: spacing.medium,
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: colors.primary,
+    marginRight: spacing.small,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checkboxChecked: {
+    backgroundColor: colors.primary,
+  },
+  checkboxInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 2,
+    backgroundColor: colors.textInverted,
+  },
+  userTypeText: {
+    fontSize: 16,
+    color: colors.text,
+  },
+  loginButton: {
+    marginTop: spacing.medium,
+  },
+  forgotPasswordContainer: {
+    alignItems: 'center',
+    marginTop: spacing.medium,
+  },
+  forgotPasswordText: {
+    color: colors.primary,
+    fontSize: 14,
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: spacing.large,
+  },
+  footerText: {
+    color: colors.textSecondary,
+    marginRight: spacing.small,
+  },
+  signUpText: {
+    color: colors.primary,
+    fontWeight: 'bold',
+  },
+  
+  // Dashboard styles
+  dashboardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: spacing.large,
+    paddingVertical: spacing.medium,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  dashboardGreeting: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: colors.text,
+  },
+  dashboardSubGreeting: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    marginTop: 4,
+  },
+  dashboardProfileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  dashboardContent: {
+    flex: 1,
+    padding: spacing.medium,
+  },
+  actionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: spacing.large,
+  },
+  actionButton: {
+    alignItems: 'center',
+    width: '30%',
+  },
+  iconContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  actionText: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    textAlign: 'center',
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.medium,
+  },
+  viewAllText: {
+    fontSize: 14,
+    color: colors.primary,
+  },
+  appointmentCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: spacing.medium,
+    backgroundColor: colors.surface,
+    borderRadius: 8,
+    marginBottom: spacing.medium,
+  },
+  appointmentInfo: {
+    flex: 1,
+  },
+  doctorName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: colors.text,
+    marginBottom: 4,
+  },
+  appointmentSpecialty: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    marginBottom: 4,
+  },
+  appointmentDateTime: {
+    fontSize: 14,
+    color: colors.primary,
+  },
+  noDataText: {
+    fontSize: 16,
+    color: colors.textTertiary,
+    textAlign: 'center',
+    marginVertical: spacing.large,
+  },
+  bookAppointmentButton: {
+    backgroundColor: colors.primary,
+    padding: spacing.medium,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  bookAppointmentText: {
+    color: colors.textInverted,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  reportCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: spacing.medium,
+    backgroundColor: colors.surface,
+    borderRadius: 8,
+    marginBottom: spacing.medium,
+  },
+  reportInfo: {
+    flex: 1,
+  },
+  reportTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: colors.text,
+    marginBottom: 4,
+  },
+  reportDate: {
+    fontSize: 14,
+    color: colors.textSecondary,
+  },
+  statusBadge: {
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 4,
+  },
+  reviewedBadge: {
+    backgroundColor: colors.success + '20',
+  },
+  pendingBadge: {
+    backgroundColor: colors.warning + '20',
+  },
+  statusText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  reviewedText: {
+    color: colors.success,
+  },
+  pendingText: {
+    color: colors.warning,
+  },
+  
+  // Doctor Dashboard styles
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: spacing.medium,
+  },
+  statCard: {
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: 8,
+    padding: spacing.medium,
+    minWidth: '40%',
+  },
+  statValue: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: colors.text,
+    marginVertical: spacing.small,
+  },
+  statLabel: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    textAlign: 'center',
+  },
+  actionsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  actionCard: {
+    width: '48%',
+    backgroundColor: colors.surface,
+    borderRadius: 8,
+    padding: spacing.medium,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.medium,
+    minHeight: 100,
+  },
+  timeline: {
+    paddingLeft: spacing.small,
+  },
+  timelineItem: {
+    flexDirection: 'row',
+    marginBottom: spacing.large,
+  },
+  timelinePoint: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: colors.primary,
+    marginTop: 6,
+    marginRight: spacing.small,
+  },
+  timelineContent: {
+    flex: 1,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+    paddingBottom: spacing.small,
+  },
+  timelineTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: colors.text,
+    marginBottom: 4,
+  },
+  timelineDesc: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    marginBottom: 4,
+  },
+  timelineTime: {
+    fontSize: 12,
+    color: colors.textTertiary,
+  },
+  
+  // Time slot picker styles
+  slotPickerContainer: {
+    width: '100%',
+    padding: spacing.medium,
+  },
+  slotPickerTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: spacing.medium,
+    color: colors.text,
+  },
+  slotGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  slotButton: {
+    width: '48%',
+    backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    borderRadius: 8,
+    paddingVertical: spacing.medium,
+    paddingHorizontal: spacing.small,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.medium,
+    minHeight: 48,
+  },
+  selectedSlotButton: {
+    backgroundColor: colors.primary,
+  },
+  slotText: {
+    color: colors.primary,
+    fontSize: 16,
+  },
+  selectedSlotText: {
+    color: colors.textInverted,
+  },
+  
+  // Extra utility
+  bottomPadding: {
+    height: 80,
+  },
+  chatContent: {
+    paddingBottom: 20,
+  },
 });
 
 export { theme };
