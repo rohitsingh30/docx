@@ -1,92 +1,159 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, Image, SafeAreaView, TextStyle } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { RootStackParamList } from '../../../types/types';
+import React, { useCallback } from 'react';
+import { View, Text, TouchableOpacity, Image, SafeAreaView, Share, Alert } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RouteProp } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { colors, spacing, commonStyles } from '../../../styles/commonStyles';
-// import { styles } from './styles/ReportDetailScreenStyles';
+import { RootStackParamList } from '../../../types/types';
+import { theme, commonStyles } from '../../../styles/commonStyles';
+
+type ReportDetailScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'ReportDetail'>;
+type ReportDetailScreenRouteProp = RouteProp<RootStackParamList, 'ReportDetail'>;
 
 const ReportDetailScreen = () => {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<ReportDetailScreenNavigationProp>();
+  const route = useRoute<ReportDetailScreenRouteProp>();
+
+  const [error, setError] = React.useState<string | null>(null);
+  const [isDownloading, setIsDownloading] = React.useState(false);
+
+  const handleDownload = useCallback(async () => {
+    setIsDownloading(true);
+    setError(null);
+    try {
+      // Implement report download functionality
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated download
+      Alert.alert('Success', 'Report downloaded successfully');
+    } catch (error) {
+      setError('Failed to download report. Please try again.');
+      console.error('Error downloading report:', error);
+    } finally {
+      setIsDownloading(false);
+    }
+  }, []);
+
+  const handleShare = useCallback(async () => {
+    setError(null);
+    try {
+      await Share.share({
+        message: 'Check out my medical report from Doc-X',
+        title: 'Medical Report'
+      });
+    } catch (error) {
+      setError('Failed to share report. Please try again.');
+      console.error('Error sharing report:', error);
+    }
+  }, []);
+
+  const handleWhatsAppShare = useCallback(async () => {
+    setError(null);
+    try {
+      // Implement WhatsApp sharing functionality
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulated share
+      Alert.alert('Success', 'Report shared via WhatsApp');
+    } catch (error) {
+      setError('Failed to share via WhatsApp. Please try again.');
+      console.error('Error sharing via WhatsApp:', error);
+    }
+  }, []);
 
   return (
-    <SafeAreaView style={commonStyles.container}>
-      <View style={{padding: spacing.medium}}>
+    <SafeAreaView style={commonStyles.safeArea}>
+      <View style={commonStyles.contentContainer}>
+        {error && (
+          <View style={[commonStyles.container, { backgroundColor: theme.colors.error, padding: theme.spacing.sm }]}>
+            <Text style={{ color: theme.colors.textInverted, fontSize: 14 }}>{error}</Text>
+          </View>
+        )}
+        
         {/* Header with back button */}
-        <View style={[commonStyles.flexRow, {marginBottom: spacing.large, alignItems: 'center'}]}>
+        <View style={[commonStyles.header, commonStyles.flexRow]}>
           <TouchableOpacity 
-            style={[commonStyles.backButton, {padding: spacing.small}]}
+            style={commonStyles.backButton}
             onPress={() => navigation.goBack()}
+            accessibilityLabel="Go back"
+            accessibilityRole="button"
           >
-            <Icon name="arrow-left" size={20} color={colors.primary} />
+            <Icon name="arrow-left" size={20} color={theme.colors.primary} />
           </TouchableOpacity>
-          <Text style={[commonStyles.headerText, {flex: 1, marginLeft: spacing.medium}]}>Hypertension Report</Text>
-          <View style={{width: 40}} />
+          <Text style={commonStyles.headerTitle}>Hypertension Report</Text>
+          <View style={commonStyles.headerRight} />
         </View>
 
         {/* Patient Info */}
-        <View style={[commonStyles.sectionContainer, {marginBottom: spacing.large, padding: spacing.medium}]}>
+        <View style={[commonStyles.sectionContainer, commonStyles.shadow]}>
           <View style={commonStyles.flexRow}>
             <Image
               source={{ uri: 'https://storage.googleapis.com/a1aa/image/6fyF3y0DLyaItEtWXJM-T9OeAvtRk_oFrwowidQFvl0.jpg' }}
-              style={{width: 48, height: 48, borderRadius: 24, marginRight: spacing.medium}}
+              style={commonStyles.profileImage}
+              accessibilityLabel="Patient profile picture"
             />
-            <View style={{flex: 1}}>
+            <View style={{ flex: 1, marginLeft: theme.spacing.md }}>
               <Text style={commonStyles.titleText}>John Smith</Text>
-              <Text style={[commonStyles.bodyText, {color: colors.lightText, marginBottom: 4}]}>Hypertension, High Risk</Text>
-              <Text style={[commonStyles.bodyText, {color: colors.lightText, marginBottom: 4}]}>Reviewed by Dr. John Doe</Text>
+              <Text style={[commonStyles.bodyText, { color: theme.colors.textSecondary }]}>Hypertension, High Risk</Text>
+              <Text style={[commonStyles.bodyText, { color: theme.colors.textSecondary }]}>Reviewed by Dr. John Doe</Text>
               <View style={commonStyles.flexRow}>
-                <Icon name="check-circle" size={14} color="#48BB78" style={{marginRight: 4}} />
-                <Text style={[commonStyles.bodyText, {color: '#48BB78'}]}>Reviewed</Text>
+                <Icon name="check-circle" size={14} color={theme.colors.success} style={{ marginRight: theme.spacing.xs }} />
+                <Text style={[commonStyles.bodyText, { color: theme.colors.success }]}>Reviewed</Text>
               </View>
             </View>
           </View>
         </View>
 
         {/* Report Sections */}
-        <View style={[commonStyles.sectionContainer, {marginBottom: spacing.medium, padding: spacing.medium}]}>
-          <Text style={[commonStyles.bodyText, {color: colors.primary, fontWeight: '600', marginBottom: spacing.small}]}>Main Diagnosis</Text>
+        <View style={[commonStyles.sectionContainer, commonStyles.shadow]}>
+          <Text style={[commonStyles.bodyText, { color: theme.colors.primary, fontWeight: '600' }]}>Main Diagnosis</Text>
           <Text style={commonStyles.bodyText}>Hypertension, High Risk</Text>
         </View>
 
-        <View style={[commonStyles.sectionContainer, {marginBottom: spacing.medium}]}>
-          <Text style={[commonStyles.bodyText, {color: colors.primary, fontWeight: '600', marginBottom: spacing.small}]}>Medication</Text>
+        <View style={[commonStyles.sectionContainer, commonStyles.shadow]}>
+          <Text style={[commonStyles.bodyText, { color: theme.colors.primary, fontWeight: '600' }]}>Medication</Text>
           <Text style={commonStyles.bodyText}>Lisinopril 10mg daily</Text>
         </View>
 
-        <View style={[commonStyles.sectionContainer, {marginBottom: spacing.medium}]}>
-          <Text style={[commonStyles.bodyText, {color: colors.primary, fontWeight: '600', marginBottom: spacing.small}]}>Test Suggested</Text>
+        <View style={[commonStyles.sectionContainer, commonStyles.shadow]}>
+          <Text style={[commonStyles.bodyText, { color: theme.colors.primary, fontWeight: '600' }]}>Test Suggested</Text>
           <Text style={commonStyles.bodyText}>Blood Pressure Monitoring, Blood Test</Text>
         </View>
 
         {/* Action Buttons */}
-        <View style={[commonStyles.flexRow, {marginBottom: spacing.medium, marginTop: spacing.large, justifyContent: 'space-between'}]}>
+        <View style={[commonStyles.flexRow, commonStyles.spaceBetween, { marginTop: theme.spacing.lg }]}>
           <TouchableOpacity 
-            style={[commonStyles.primaryButton, {flex: 2, marginRight: spacing.medium}]}
+            style={[commonStyles.primaryButton, { flex: 2, marginRight: theme.spacing.md }]}
+            onPress={handleDownload}
+            accessibilityLabel="Download report"
+            accessibilityRole="button"
           >
             <Text style={commonStyles.primaryButtonText}>Download Report</Text>
           </TouchableOpacity>
           
           <View style={commonStyles.flexRow}>
             <TouchableOpacity 
-              style={[commonStyles.secondaryButton, {marginRight: spacing.medium, padding: spacing.medium}]}
+              style={[commonStyles.secondaryButton, { marginRight: theme.spacing.md }]}
+              onPress={handleWhatsAppShare}
+              accessibilityLabel="Share via WhatsApp"
+              accessibilityRole="button"
             >
-              <Icon name="whatsapp" size={20} color={colors.primary} />
+              <Icon name="whatsapp" size={20} color={theme.colors.primary} />
             </TouchableOpacity>
             
             <TouchableOpacity 
-              style={[commonStyles.secondaryButton, {padding: spacing.medium}]}
+              style={commonStyles.secondaryButton}
+              onPress={handleShare}
+              accessibilityLabel="More sharing options"
+              accessibilityRole="button"
             >
-              <Icon name="ellipsis-h" size={20} color={colors.primary} />
+              <Icon name="share-alt" size={20} color={theme.colors.primary} />
             </TouchableOpacity>
           </View>
         </View>
 
         {/* Consult Button */}
         <TouchableOpacity 
-          style={commonStyles.primaryButton}
-          onPress={() => navigation.navigate('DoctorSearch', undefined)}
+          style={[commonStyles.primaryButton, { marginTop: theme.spacing.md }]}
+          onPress={() => navigation.navigate('DoctorSearch')}
+          accessibilityLabel="Consult a doctor"
+          accessibilityRole="button"
         >
           <Text style={commonStyles.primaryButtonText}>Consult a Doctor</Text>
         </TouchableOpacity>

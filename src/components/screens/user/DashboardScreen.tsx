@@ -1,11 +1,17 @@
+// React and React Native imports
 import React, { useContext } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Image, SafeAreaView } from 'react-native';
+
+// Third-party imports
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { UserStackParamList } from '../../../types/types';
-import { AuthContext } from '../../../context/AuthContext';
-import { commonStyles, colors } from '../../../styles/commonStyles';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+
+// Local imports
+import { HealthReport, UserStackParamList } from '../../../types/types';
+import { AuthContext } from '../../../context/AuthContext';
+import { commonStyles,profileImage,dashBoardStyle,buttonStyles, containerStyles, headerStyles, sharedStyles, textStyles, cardStyles, appointmentCard, badgeStyles } from '../../../styles/commonStyles';
+import { theme } from '../../../styles/theme';
 
 const DashboardScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<UserStackParamList>>();
@@ -34,7 +40,8 @@ const DashboardScreen = () => {
       id: '1',
       title: 'Hypertension Report',
       date: '10 June 2023',
-      isReviewed: true
+      isReviewed: true,
+
     },
     {
       id: '2',
@@ -46,59 +53,75 @@ const DashboardScreen = () => {
 
   return (
     <SafeAreaView style={commonStyles.safeArea}>
-      <View style={commonStyles.dashboardHeader}>
+      <View style={dashBoardStyle.dashboardHeader}>
         <View>
-          <Text style={commonStyles.dashboardGreeting}>Hello, {user?.name}</Text>
-          <Text style={commonStyles.dashboardSubGreeting}>How are you feeling today?</Text>
+          <Text style={dashBoardStyle.dashboardGreeting}>Hello, {user?.name}</Text>
+          <Text style={dashBoardStyle.dashboardSubGreeting}>How are you feeling today?</Text>
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+        <TouchableOpacity 
+          onPress={() => navigation.navigate('Profile')}
+          accessibilityRole="button"
+          accessibilityLabel="View Profile"
+          style={[commonStyles.profileButton, sharedStyles.shadow]}
+        >
           <Image
             source={{ uri: 'https://randomuser.me/api/portraits/men/32.jpg' }}
-            style={commonStyles.dashboardProfileImage}
+            style={[profileImage, { borderColor: theme.colors.border }]}
+            accessibilityRole="image"
+            accessibilityLabel="Profile picture"
           />
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={commonStyles.dashboardContent}>
+      <ScrollView style={dashBoardStyle.dashboardContent}>
         {/* Quick Actions */}
-        <View style={commonStyles.actionsContainer}>
+        <View style={containerStyles.actionContainer}>
           <TouchableOpacity 
-            style={commonStyles.actionButton}
+            style={buttonStyles.actionButton}
             onPress={() => navigation.navigate('ChatBot')}
           >
-            <View style={[commonStyles.iconContainer, { backgroundColor: colors.primary }]}>
-              <Icon name="chat" size={24} color={colors.textInverted} />
+            <View style={[containerStyles.iconContainer, { backgroundColor: theme.colors.primary }]}>
+              <Icon name="chat" size={24} color={theme.colors.textInverted} />
             </View>
             <Text style={commonStyles.actionText}>Start a New Check</Text>
           </TouchableOpacity>
 
           <TouchableOpacity 
-            style={commonStyles.actionButton}
+            style={buttonStyles.actionButton}
             onPress={() => navigation.navigate('DoctorSearch')}
+            accessibilityLabel="Search for doctors"
           >
-            <View style={[commonStyles.iconContainer, { backgroundColor: colors.secondary }]}>
-              <Icon name="search" size={24} color={colors.textInverted} />
+            <View style={[containerStyles.iconContainer, { backgroundColor: theme.colors.secondary }]}>
+              <Icon name="search" size={24} color={theme.colors.textInverted} />
             </View>
             <Text style={commonStyles.actionText}>Find a Doctor</Text>
           </TouchableOpacity>
 
           <TouchableOpacity 
-            style={commonStyles.actionButton}
-            onPress={() => navigation.navigate('MedicalRecords')}
+            style={buttonStyles.actionButton}
+            onPress={() => navigation.navigate('MedicalRecords', { 
+              report: {
+                title: recentReports[0]?.title || '',
+                symptoms: [],
+                possibleConditions: [],
+                recommendations: [],
+                shouldSeeDoctor: false
+              }
+            })}
           >
-            <View style={[commonStyles.iconContainer, { backgroundColor: colors.success }]}>
-              <Icon name="description" size={24} color={colors.textInverted} />
+            <View style={[containerStyles.iconContainer, { backgroundColor: theme.colors.success }]}>
+              <Icon name="description" size={24} color={theme.colors.textInverted} />
             </View>
             <Text style={commonStyles.actionText}>My Reports</Text>
           </TouchableOpacity>
         </View>
 
         {/* Upcoming Appointments */}
-        <View style={commonStyles.sectionContainer}>
-          <View style={commonStyles.sectionHeader}>
-            <Text style={commonStyles.sectionTitle}>Upcoming Appointments</Text>
+        <View style={[containerStyles.sectionContainer, sharedStyles.shadow]}>
+          <View style={[headerStyles.sectionHeader]}>
+            <Text style={textStyles.sectionTitle}>Upcoming Appointments</Text>
             <TouchableOpacity onPress={() => navigation.navigate('AppointmentList')}>
-              <Text style={commonStyles.viewAllText}>View All</Text>
+              <Text style={textStyles.viewAllText}>View All</Text>
             </TouchableOpacity>
           </View>
 
@@ -106,35 +129,43 @@ const DashboardScreen = () => {
             upcomingAppointments.map(appointment => (
               <TouchableOpacity 
                 key={appointment.id}
-                style={commonStyles.appointmentCard}
+                style={[cardStyles.appointmentCard, sharedStyles.shadow, { marginBottom: theme.spacing.sm }]}
                 onPress={() => navigation.navigate('AppointmentDetail', { appointmentId: appointment.id })}
               >
-                <View style={commonStyles.appointmentInfo}>
-                  <Text style={commonStyles.doctorName}>{appointment.doctorName}</Text>
-                  <Text style={commonStyles.appointmentSpecialty}>{appointment.specialty}</Text>
-                  <Text style={commonStyles.appointmentDateTime}>{appointment.date} at {appointment.time}</Text>
+                <View style={[appointmentCard.appointmentInfo, { flex: 1 }]}>
+                  <Text style={[textStyles.doctorName, { marginBottom: theme.spacing.xs }]}>{appointment.doctorName}</Text>
+                  <Text style={[textStyles.appointmentSpecialty, { marginBottom: theme.spacing.xs }]}>{appointment.specialty}</Text>
+                  <Text style={textStyles.appointmentDateTime}>{appointment.date} at {appointment.time}</Text>
                 </View>
-                <Icon name="chevron-right" size={24} color={colors.primary} />
+                <Icon name="chevron-right" size={24} color={theme.colors.primary} />
               </TouchableOpacity>
             ))
           ) : (
-            <Text style={commonStyles.noDataText}>No upcoming appointments</Text>
+            <Text style={[textStyles.noDataText, { padding: theme.spacing.md }]}>No upcoming appointments</Text>
           )}
 
           <TouchableOpacity 
-            style={commonStyles.bookAppointmentButton}
+            style={[buttonStyles.bookAppointmentButton, sharedStyles.shadow, { marginTop: theme.spacing.md }]}
             onPress={() => navigation.navigate('DoctorSearch')}
           >
-            <Text style={commonStyles.bookAppointmentText}>Book a Consultation</Text>
+            <Text style={textStyles.bookAppointmentText}>Book a Consultation</Text>
           </TouchableOpacity>
         </View>
 
         {/* Recent Health Reports */}
-        <View style={commonStyles.sectionContainer}>
-          <View style={commonStyles.sectionHeader}>
-            <Text style={commonStyles.sectionTitle}>Recent Health Reports</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('MedicalRecords')}>
-              <Text style={commonStyles.viewAllText}>View All</Text>
+        <View style={[containerStyles.sectionContainer, sharedStyles.shadow]}>
+          <View style={[headerStyles.sectionHeader, commonStyles.spaceBetween]}>
+            <Text style={textStyles.sectionTitle}>Recent Health Reports</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('MedicalRecords', { 
+              report: {
+                title: recentReports[0]?.title || '',
+                symptoms: [],
+                possibleConditions: [],
+                recommendations: [],
+                shouldSeeDoctor: false
+              }
+            })}>
+              <Text style={textStyles.viewAllText}>View All</Text>
             </TouchableOpacity>
           </View>
 
@@ -142,34 +173,34 @@ const DashboardScreen = () => {
             recentReports.map(report => (
               <TouchableOpacity 
                 key={report.id}
-                style={commonStyles.reportCard}
+                style={[cardStyles.reportCard, sharedStyles.shadow, { marginBottom: theme.spacing.sm }]}
                 onPress={() => navigation.navigate('ReportDetail', { reportId: report.id, isReviewed: report.isReviewed })}
               >
-                <View style={commonStyles.reportInfo}>
-                  <Text style={commonStyles.reportTitle}>{report.title}</Text>
-                  <Text style={commonStyles.reportDate}>Generated on {report.date}</Text>
+                <View style={[containerStyles.reportInfo, { flex: 1 }]}>
+                  <Text style={[textStyles.reportTitle, { marginBottom: theme.spacing.xs }]}>{report.title}</Text>
+                  <Text style={textStyles.reportDate}>Generated on {report.date}</Text>
                 </View>
-                <View style={[commonStyles.statusBadge, report.isReviewed ? commonStyles.reviewedBadge : commonStyles.pendingBadge]}>
-                  <Text style={[commonStyles.statusText, report.isReviewed ? commonStyles.reviewedText : commonStyles.pendingText]}>
+                <View style={[badgeStyles.statusBadge, report.isReviewed ? badgeStyles.reviewedBadge : badgeStyles.pendingBadge]}>
+                  <Text style={[textStyles.statusText, report.isReviewed ? textStyles.reviewedText : textStyles.pendingText]}>
                     {report.isReviewed ? 'Reviewed' : 'Pending'}
                   </Text>
                 </View>
               </TouchableOpacity>
             ))
           ) : (
-            <Text style={commonStyles.noDataText}>No recent reports</Text>
+            <Text style={textStyles.noDataText}>No recent reports</Text>
           )}
         </View>
 
         <TouchableOpacity 
-          style={commonStyles.logoutButton}
+          style={buttonStyles.logoutButton}
           onPress={logout}
         >
-          <Text style={commonStyles.logoutText}>Logout</Text>
+          <Text style={buttonStyles.buttonText}>Logout</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
-};
+}
 
 export default DashboardScreen;

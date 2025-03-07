@@ -1,10 +1,15 @@
+// React and React Native imports
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, Switch } from 'react-native';
+
+// Third-party imports
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { DoctorStackParamList } from '../../../types/NavigationTypes';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { colors, spacing, commonStyles } from '../../../styles/commonStyles';
+
+// Local imports
+import { DoctorStackParamList } from '../../../types/types';
+import { theme, commonStyles } from '../../../styles/commonStyles';
 import Header from '../../common/Header';
 
 const AvailabilitySettingsScreen = () => {
@@ -25,10 +30,10 @@ const AvailabilitySettingsScreen = () => {
     <SafeAreaView style={commonStyles.safeArea}>
       <Header title="Availability Settings" />
       
-      <ScrollView style={commonStyles.container}>
-        <View style={{ padding: spacing.medium }}>
+      <ScrollView style={commonStyles.scrollView}>
+        <View style={commonStyles.contentContainer}>
           {/* Overall Availability Toggle */}
-          <View style={[commonStyles.sectionContainer, { marginBottom: spacing.large }]}>
+          <View style={[commonStyles.sectionContainer, commonStyles.shadow]}>
             <View style={[commonStyles.flexRow, commonStyles.spaceBetween]}>
               <View>
                 <Text style={commonStyles.titleText}>Available for Appointments</Text>
@@ -37,33 +42,42 @@ const AvailabilitySettingsScreen = () => {
               <Switch
                 value={isAvailable}
                 onValueChange={setIsAvailable}
-                trackColor={{ false: colors.disabled, true: colors.primary }}
+                trackColor={{ false: theme.colors.disabled, true: theme.colors.primary }}
+                accessibilityRole="switch"
+                accessibilityLabel="Toggle availability"
+                accessibilityState={{ checked: isAvailable }}
               />
             </View>
           </View>
 
           {/* Weekly Schedule */}
-          <View style={commonStyles.sectionContainer}>
-            <Text style={[commonStyles.titleText, { marginBottom: spacing.medium }]}>Weekly Schedule</Text>
-            {weekDays.map((day, index) => (
+          <View style={[commonStyles.sectionContainer, commonStyles.shadow]}>
+            <Text style={commonStyles.titleText}>Weekly Schedule</Text>
+            {weekDays.map((day) => (
               <TouchableOpacity 
                 key={day.day}
-                style={[commonStyles.listItem, { marginBottom: index < weekDays.length - 1 ? spacing.small : 0 }]}
+                style={[commonStyles.listItem, commonStyles.shadow]}
                 onPress={() => {}}
+                accessibilityRole="button"
+                accessibilityLabel={`Edit schedule for ${day.day}`}
               >
-                <View style={{ flex: 1 }}>
-                  <Text style={commonStyles.bodyText}>{day.day}</Text>
-                  <Text style={commonStyles.smallText}>{day.hours}</Text>
+                <View style={commonStyles.flexRow}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={commonStyles.bodyText}>{day.day}</Text>
+                    <Text style={commonStyles.smallText}>{day.hours}</Text>
+                  </View>
+                  <Icon name="pencil" size={16} color={theme.colors.primary} />
                 </View>
-                <Icon name="pencil" size={16} color={colors.primary} />
               </TouchableOpacity>
             ))}
           </View>
 
           {/* Save Button */}
           <TouchableOpacity 
-            style={[commonStyles.primaryButton, { marginTop: spacing.large }]}
+            style={[commonStyles.primaryButton, commonStyles.shadow]}
             onPress={() => navigation.goBack()}
+            accessibilityRole="button"
+            accessibilityLabel="Save availability settings"
           >
             <Text style={commonStyles.primaryButtonText}>Save Changes</Text>
           </TouchableOpacity>

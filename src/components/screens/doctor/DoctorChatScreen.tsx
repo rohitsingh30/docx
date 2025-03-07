@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { 
   View, 
   Text, 
@@ -12,7 +12,7 @@ import {
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
-import { DoctorStackParamList } from '../../../types/NavigationTypes';
+import { DoctorStackParamList } from '../../../types/types';
 import Header from '../../common/Header';
 import { colors, commonStyles, spacing } from '../../../styles/commonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -24,6 +24,40 @@ type Message = {
   sender: 'doctor' | 'patient';
   timestamp: Date;
 };
+
+const MessageBubble = memo(({ message }: { message: Message }) => (
+  <View
+    style={[
+      commonStyles.messageContainer,
+      {
+        alignSelf: message.sender === 'doctor' ? 'flex-end' : 'flex-start',
+        backgroundColor: message.sender === 'doctor' ? colors.primary : colors.surface
+      }
+    ]}
+    accessibilityLabel={`${message.sender} message: ${message.text}`}
+    accessibilityRole="text"
+  >
+    <Text
+      style={{
+        color: message.sender === 'doctor' ? colors.textInverted : colors.text
+      }}
+    >
+      {message.text}
+    </Text>
+    <Text
+      style={{
+        fontSize: 12,
+        color: message.sender === 'doctor' ? colors.textInverted : colors.textTertiary,
+        alignSelf: 'flex-end',
+        marginTop: spacing.xxs
+      }}
+    >
+      {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+    </Text>
+  </View>
+));
+
+MessageBubble.displayName = 'MessageBubble';
 
 const DoctorChatScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<DoctorStackParamList>>();
@@ -65,24 +99,26 @@ const DoctorChatScreen = () => {
     setMessages(mockMessages);
   }, [chatId]);
 
-  const sendMessage = () => {
+  const scrollToBottom = useCallback(() => {
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+  }, []);
+
+  const sendMessage = useCallback(() => {
     if (newMessage.trim() === '') return;
 
     const message: Message = {
       id: Date.now().toString(),
-      text: newMessage,
+      text: newMessage.trim(),
       sender: 'doctor',
       timestamp: new Date()
     };
 
     setMessages(prev => [...prev, message]);
     setNewMessage('');
-
-    // Scroll to bottom
-    setTimeout(() => {
-      scrollViewRef.current?.scrollToEnd({ animated: true });
-    }, 100);
-  };
+    scrollToBottom();
+  }, [newMessage, scrollToBottom]);
 
   return (
     <SafeAreaView style={commonStyles.container}>
@@ -97,37 +133,10 @@ const DoctorChatScreen = () => {
           ref={scrollViewRef}
           style={{ flex: 1, padding: spacing.medium }}
           contentContainerStyle={{ paddingBottom: spacing.large }}
-          onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
+          onContentSizeChange={scrollToBottom}
         >
           {messages.map(message => (
-            <View
-              key={message.id}
-              style={[
-                commonStyles.messageContainer,
-                {
-                  alignSelf: message.sender === 'doctor' ? 'flex-end' : 'flex-start',
-                  backgroundColor: message.sender === 'doctor' ? colors.primary : colors.surface
-                }
-              ]}
-            >
-              <Text
-                style={{
-                  color: message.sender === 'doctor' ? colors.textInverted : colors.text
-                }}
-              >
-                {message.text}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: message.sender === 'doctor' ? colors.textInverted : colors.textTertiary,
-                  alignSelf: 'flex-end',
-                  marginTop: spacing.xxs
-                }}
-              >
-                {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </Text>
-            </View>
+            <MessageBubble key={message.id} message={message} />
           ))}
         </ScrollView>
 
@@ -153,6 +162,8 @@ const DoctorChatScreen = () => {
             value={newMessage}
             onChangeText={setNewMessage}
             placeholder="Type a message..."
+            accessibilityLabel="Message input field"
+            accessibilityRole="textbox"
           />
           <TouchableOpacity
             onPress={sendMessage}
@@ -164,6 +175,9 @@ const DoctorChatScreen = () => {
               justifyContent: 'center',
               alignItems: 'center'
             }}
+            accessibilityLabel="Send message"
+            accessibilityRole="button"
+            disabled={newMessage.trim() === ''}
           >
             <Icon name="send" size={16} color={colors.textInverted} />
           </TouchableOpacity>

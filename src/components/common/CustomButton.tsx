@@ -1,6 +1,6 @@
 import React from 'react';
-import { TouchableOpacity, Text, ActivityIndicator, StyleSheet } from 'react-native';
-import { colors, commonStyles } from '../../styles/commonStyles';
+import { TouchableOpacity, Text, ActivityIndicator, StyleProp, ViewStyle, TextStyle } from 'react-native';
+import { commonStyles, textStyles, theme } from '../../styles/commonStyles';
 
 interface CustomButtonProps {
   title: string;
@@ -8,8 +8,8 @@ interface CustomButtonProps {
   variant?: 'primary' | 'secondary' | 'outline';
   isLoading?: boolean;
   disabled?: boolean;
-  style?: any;
-  textStyle?: any;
+  style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -19,31 +19,24 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   isLoading = false,
   disabled = false,
   style,
-  textStyle,
+  textStyle
 }) => {
   const getButtonStyle = () => {
-    if (variant === 'secondary') {
-      return styles.secondaryButton;
-    } else if (variant === 'outline') {
-      return styles.outlineButton;
-    }
-    return commonStyles.primaryButton;
+    if (variant === 'primary') return commonStyles.primaryButton;
+    if (variant === 'secondary') return commonStyles.secondaryButton;
+    return commonStyles.secondaryButton;
   };
 
   const getTextStyle = () => {
-    if (variant === 'secondary') {
-      return styles.secondaryButtonText;
-    } else if (variant === 'outline') {
-      return styles.outlineButtonText;
-    }
-    return commonStyles.primaryButtonText;
+    if (variant === 'primary') return commonStyles.primaryButtonText;
+    return textStyles.secondaryButtonText;
   };
 
   return (
     <TouchableOpacity
       style={[
         getButtonStyle(),
-        (disabled || isLoading) && commonStyles.disabledButton,
+        disabled || isLoading ? commonStyles.disabledButton : null,
         style,
       ]}
       onPress={onPress}
@@ -51,40 +44,12 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       activeOpacity={0.8}
     >
       {isLoading ? (
-        <ActivityIndicator
-          color={variant === 'primary' ? colors.textInverted : colors.primary}
-          size="small"
-        />
+        <ActivityIndicator size="small" color={variant === 'primary' ? theme.colors.textInverted : theme.colors.primary} />
       ) : (
         <Text style={[getTextStyle(), textStyle]}>{title}</Text>
       )}
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  secondaryButton: {
-    ...commonStyles.secondaryButton,
-    backgroundColor: colors.primaryLight,
-  },
-  outlineButton: {
-    backgroundColor: 'transparent',
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: colors.primary,
-    minHeight: 48,
-  },
-  secondaryButtonText: {
-    ...commonStyles.secondaryButtonText,
-  },
-  outlineButtonText: {
-    color: colors.primary,
-    fontSize: 16,
-    fontWeight: '500',
-  },
-});
 
 export default CustomButton;

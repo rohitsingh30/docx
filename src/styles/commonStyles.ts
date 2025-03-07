@@ -1,748 +1,882 @@
-import { StyleSheet, Platform, TextStyle } from 'react-native';
+import { StyleSheet, Platform, FlexAlignType } from 'react-native';
 import { theme } from './theme';
 
-// Color palette
-export const colors = {
-  primary: theme.colors.primary,
-  primaryDark: theme.colors.primaryDark,
-  primaryLight: theme.colors.primaryLight,
-  secondary: theme.colors.secondary,
-  background: theme.colors.background,
-  surface: theme.colors.surface,
-  card: theme.colors.card,
-  text: theme.colors.text,
-  textSecondary: theme.colors.textSecondary,
-  textTertiary: theme.colors.textTertiary,
-  textInverted: theme.colors.textInverted,
-  border: theme.colors.border,
-  error: theme.colors.error,
-  success: theme.colors.success,
-  warning: theme.colors.warning,
-  disabled: theme.colors.disabled,
-  shadow: '#000000',
-  lightText: theme.colors.textTertiary,
-  typingDot: theme.colors.primary,
-  botMessageBackground: theme.colors.surface,
-  userMessageBackground: theme.colors.primaryLight,
-  suggestionBackground: theme.colors.surface,
-  suggestionText: theme.colors.primary,
-  errorText: theme.colors.error,
+// Re-export theme for convenience
+export { theme };
+
+// Type definitions for better type safety
+type FlexJustifyContent = 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around';
+type FlexDirection = 'row' | 'column' | 'row-reverse' | 'column-reverse';
+type FontWeight = 'normal' | 'bold' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
+
+// Platform-specific shadow styles
+const shadows = {
+  sm: Platform.select({
+    ios: {
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 2,
+    },
+    android: {
+      elevation: 2,
+      shadowColor: theme.colors.shadow,
+    },
+  }),
+  md: Platform.select({
+    ios: {
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+    },
+    android: {
+      elevation: 3,
+      shadowColor: theme.colors.shadow,
+    },
+  }),
+  lg: Platform.select({
+    ios: {
+      shadowColor: theme.colors.shadow,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.15,
+      shadowRadius: 8,
+    },
+    android: {
+      elevation: 5,
+      shadowColor: theme.colors.shadow,
+    },
+  }),
 };
 
-// Spacing
-export const spacing = {
-  xxs: theme.spacing.xxs,
-  xs: theme.spacing.xs,
-  sm: theme.spacing.sm,
-  small: theme.spacing.sm,
-  md: theme.spacing.md,
-  medium: theme.spacing.md,
-  lg: theme.spacing.lg,
-  large: theme.spacing.lg,
-  xl: theme.spacing.xl,
-  xxl: theme.spacing.xxl,
-};
-
-// Typography
-export const typography = {
-  header: {
-    fontSize: theme.typography.fontSize.xxl,
-    fontWeight: theme.typography.fontWeight.bold,
-    color: colors.text,
-  },
-  title: {
-    fontSize: theme.typography.fontSize.xl,
-    fontWeight: theme.typography.fontWeight.semibold,
-    color: colors.text,
-  },
-  body: {
-    fontSize: theme.typography.fontSize.md,
-    color: colors.text,
-  },
-  small: {
-    fontSize: theme.typography.fontSize.sm,
-    color: colors.textSecondary,
-  },
-  caption: {
-    fontSize: theme.typography.fontSize.xs,
-    color: colors.textTertiary,
-  }
-};
-
-// Common component styles
+// Core styles - fundamental building blocks
 export const commonStyles = StyleSheet.create({
-  // Core layouts
+  // Layout styles
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: theme.colors.background,
+    padding: theme.spacing.md,
+  },
+  primaryText:{
+    fontSize: theme.typography.fontSize.lg,
   },
   safeArea: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: theme.colors.background,
   },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    padding: spacing.medium,
-  },
-  centeredContent: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: spacing.medium,
-  },
-  
-  // Flexbox helpers
   flexRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
+  flexCenter: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center' as FlexAlignType,
+  },
   spaceBetween: {
     justifyContent: 'space-between',
   },
-  alignCenter: {
-    alignItems: 'center',
-  },
-  alignEnd: {
-    alignItems: 'flex-end',
-  },
-  justifyCenter: {
-    justifyContent: 'center',
-  },
-  
-  // Header and navigation
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: spacing.medium,
-    paddingHorizontal: spacing.large,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    backgroundColor: colors.background,
-    ...Platform.select({
-      ios: {
-        shadowColor: colors.shadow,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 4,
-      },
-    }),
-  },
-  headerTitle: {
-    ...typography.header,
-    marginLeft: spacing.small,
-  },
-  headerText: {
-    ...typography.header as TextStyle,
-    color: colors.text,
-  },
-  backButton: {
-    padding: spacing.small,
-    borderRadius: 20,
-  },
-  
-  // Cards and sections
-  sectionContainer: {
-    backgroundColor: colors.surface,
-    borderRadius: 8,
-    padding: spacing.medium,
-    marginBottom: spacing.medium,
-    ...Platform.select({
-      ios: {
-        shadowColor: colors.shadow,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
-  card: {
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: spacing.medium,
-    ...Platform.select({
-      ios: {
-        shadowColor: colors.shadow,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
-  
-  // Text styles
-  titleText: {
-    ...typography.title,
-    marginBottom: spacing.small,
-  } as TextStyle,
-  bodyText: {
-    ...typography.body,
-  },
-  smallText: {
-    ...typography.small,
-  },
-  
-  // Buttons
-  primaryButton: {
-    backgroundColor: colors.primary,
-    padding: spacing.medium,
-    borderRadius: 8,
-    alignItems: 'center',
-    ...Platform.select({
-      ios: {
-        shadowColor: colors.shadow,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
-  secondaryButton: {
-    backgroundColor: colors.surface,
-    padding: spacing.medium,
-    borderRadius: 8,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  primaryButtonText: {
-    ...typography.body,
-    color: colors.textInverted,
-    fontWeight: '600',
-  },
-  secondaryButtonText: {
-    ...typography.body,
-    color: colors.primary,
-    fontWeight: '600',
-  },
-  disabledButton: {
-    opacity: 0.7,
-    backgroundColor: colors.disabled,
-  },
-  
-  // List items
-  listItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: spacing.small,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  
-  // Profile elements
-  profileHeader: {
-    alignItems: 'center',
-    marginBottom: spacing.large,
-  },
-  profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: spacing.medium,
-  },
-  name: {
-    ...typography.title,
-    marginBottom: spacing.xxs,
-  },
-  email: {
-    ...typography.small,
-  },
-  
-  // Form elements
-  input: {
-    height: 48,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 8,
-    paddingHorizontal: spacing.medium,
-    backgroundColor: colors.background,
-    marginBottom: spacing.medium,
-  },
-  inputError: {
-    borderColor: colors.error,
-  },
-  label: {
-    ...typography.small,
-    marginBottom: spacing.xxs,
-    fontWeight: '500',
-  },
-  errorText: {
-    ...typography.small,
-    color: colors.error,
-    marginTop: spacing.xxs,
-  },
-  
-  // Chat elements
-  chatContainer: {
+  scrollView: {
     flex: 1,
-    backgroundColor: colors.background,
   },
-  messageContainer: {
-    marginBottom: spacing.medium,
-    maxWidth: '85%',
-    borderRadius: 16,
-    padding: spacing.medium,
-    backgroundColor: colors.surface,
-    ...Platform.select({
-      ios: {
-        shadowColor: colors.shadow,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
-  botMessage: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.botMessageBackground,
-  },
-  userMessage: {
-    alignSelf: 'flex-end',
-    backgroundColor: colors.userMessageBackground,
-  },
-  messageText: {
-    color: colors.text,
-    fontSize: 16,
-  },
-  userMessageText: {
-    color: colors.text,
-  },
-  suggestionsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: spacing.small,
-  },
-  suggestionButton: {
-    backgroundColor: colors.suggestionBackground,
-    paddingVertical: spacing.small,
-    paddingHorizontal: spacing.medium,
-    borderRadius: 20,
-    marginRight: spacing.small,
-    marginBottom: spacing.small,
-    borderWidth: 1,
-    borderColor: colors.primary,
-  },
-  suggestionText: {
-    color: colors.suggestionText,
-    fontSize: 14,
-  },
-  disabledSuggestion: {
-    opacity: 0.5,
-  },
-  answeredSuggestion: {
-    fontWeight: 'bold',
-  },
-  
-  // Section styles
-  section: {
-    marginBottom: spacing.large,
-  },
-  sectionTitle: {
-    ...typography.title,
-    marginBottom: spacing.medium,
+  contentContainer: {
+    padding: theme.spacing.md,
   },
 
-  // Utility styles
-  shadow: {
-    ...Platform.select({
-      ios: {
-        shadowColor: colors.shadow,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
+  // Card styles
+  card: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.md,
+    ...shadows.sm,
   },
-  divider: {
-    height: 1,
-    backgroundColor: colors.border,
-    marginVertical: spacing.medium,
+  sectionContainer: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.lg,
+    marginBottom: theme.spacing.lg,
+    ...shadows.sm,
   },
-  logoutButton: {
-    backgroundColor: colors.error,
-    padding: spacing.medium,
-    borderRadius: 8,
+
+  // Button styles
+  primaryButton: {
+    backgroundColor: theme.colors.primary,
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.md,
+    borderRadius: theme.borderRadius.sm,
     alignItems: 'center',
+    justifyContent: 'center',
+    ...shadows.sm,
   },
-  buttonText: {
-    color: colors.textInverted,
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  
-  // Login styles
-  loginScrollContainer: {
-    flexGrow: 1,
-    padding: spacing.large,
+  secondaryButton: {
+    backgroundColor: theme.colors.primaryLight,
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.md,
+    borderRadius: theme.borderRadius.sm,
+    alignItems: 'center',
     justifyContent: 'center',
   },
-  logoContainer: {
+  outlineButton: {
+    backgroundColor: 'transparent',
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.md,
+    borderRadius: theme.borderRadius.sm,
+    borderWidth: 1,
+    borderColor: theme.colors.primary,
     alignItems: 'center',
-    marginBottom: spacing.large,
-  },
-  appName: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: colors.primary,
-    marginBottom: spacing.small,
-  },
-  tagline: {
-    fontSize: 16,
-    color: colors.textSecondary,
-  },
-  formContainer: {
-    marginVertical: spacing.large,
-  },
-  userTypeContainer: {
-    marginTop: spacing.medium,
-    marginBottom: spacing.medium,
-  },
-  checkboxContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  checkbox: {
-    width: 20,
-    height: 20,
-    borderRadius: 4,
-    borderWidth: 2,
-    borderColor: colors.primary,
-    marginRight: spacing.small,
     justifyContent: 'center',
-    alignItems: 'center',
   },
-  checkboxChecked: {
-    backgroundColor: colors.primary,
+
+  // Text styles
+  titleText: {
+    fontSize: theme.typography.fontSize.xl,
+    fontWeight: '700' as FontWeight,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.sm,
   },
-  checkboxInner: {
-    width: 10,
-    height: 10,
-    borderRadius: 2,
-    backgroundColor: colors.textInverted,
+  subtitleText: {
+    fontSize: theme.typography.fontSize.lg,
+    fontWeight: '500' as FontWeight,
+    color: theme.colors.textSecondary,
+    marginBottom: theme.spacing.xs,
   },
-  userTypeText: {
-    fontSize: 16,
-    color: colors.text,
+  bodyText: {
+    fontSize: theme.typography.fontSize.md,
+    color: theme.colors.text,
+    lineHeight: theme.typography.lineHeight.normal,
   },
-  loginButton: {
-    marginTop: spacing.medium,
+  captionText: {
+    fontSize: theme.typography.fontSize.sm,
+    color: theme.colors.textTertiary,
   },
-  forgotPasswordContainer: {
-    alignItems: 'center',
-    marginTop: spacing.medium,
-  },
-  forgotPasswordText: {
-    color: colors.primary,
-    fontSize: 14,
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: spacing.large,
-  },
-  footerText: {
-    color: colors.textSecondary,
-    marginRight: spacing.small,
-  },
-  signUpText: {
-    color: colors.primary,
-    fontWeight: 'bold',
-  },
-  
-  // Dashboard styles
-  dashboardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: spacing.large,
-    paddingVertical: spacing.medium,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  dashboardGreeting: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: colors.text,
-  },
-  dashboardSubGreeting: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    marginTop: 4,
-  },
-  dashboardProfileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
-  dashboardContent: {
-    flex: 1,
-    padding: spacing.medium,
-  },
-  actionsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: spacing.large,
-  },
-  actionButton: {
-    alignItems: 'center',
-    width: '30%',
-  },
-  iconContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  actionText: {
-    fontSize: 12,
-    color: colors.textSecondary,
+  primaryButtonText: {
+    fontSize: theme.typography.fontSize.md,
+    fontWeight: '500' as FontWeight,
+    color: theme.colors.textInverted,
     textAlign: 'center',
   },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: spacing.medium,
-  },
-  viewAllText: {
-    fontSize: 14,
-    color: colors.primary,
-  },
-  appointmentCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: spacing.medium,
-    backgroundColor: colors.surface,
-    borderRadius: 8,
-    marginBottom: spacing.medium,
-  },
-  appointmentInfo: {
-    flex: 1,
-  },
-  doctorName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: colors.text,
-    marginBottom: 4,
-  },
-  appointmentSpecialty: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    marginBottom: 4,
-  },
-  appointmentDateTime: {
-    fontSize: 14,
-    color: colors.primary,
-  },
-  noDataText: {
-    fontSize: 16,
-    color: colors.textTertiary,
+  secondaryButtonText: {
+    fontSize: theme.typography.fontSize.md,
+    fontWeight: 'bold' as FontWeight,
+    color: theme.colors.primary,
     textAlign: 'center',
-    marginVertical: spacing.large,
   },
-  bookAppointmentButton: {
-    backgroundColor: colors.primary,
-    padding: spacing.medium,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  bookAppointmentText: {
-    color: colors.textInverted,
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  reportCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: spacing.medium,
-    backgroundColor: colors.surface,
-    borderRadius: 8,
-    marginBottom: spacing.medium,
-  },
-  reportInfo: {
-    flex: 1,
-  },
-  reportTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: colors.text,
-    marginBottom: 4,
-  },
-  reportDate: {
-    fontSize: 14,
-    color: colors.textSecondary,
-  },
-  statusBadge: {
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 4,
-  },
-  reviewedBadge: {
-    backgroundColor: colors.success + '20',
-  },
-  pendingBadge: {
-    backgroundColor: colors.warning + '20',
-  },
-  statusText: {
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  reviewedText: {
-    color: colors.success,
-  },
-  pendingText: {
-    color: colors.warning,
-  },
-  
-  // Doctor Dashboard styles
+
+  // Doctor dashboard specific styles
   statsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: spacing.medium,
+    marginTop: theme.spacing.md,
+    flexWrap: 'wrap',
+    gap: theme.spacing.md,
   },
   statCard: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.lg,
     alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderRadius: 8,
-    padding: spacing.medium,
-    minWidth: '40%',
+    minWidth: 150,
+    flex: 1,
+    margin: theme.spacing.xs,
+    ...shadows.md,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
   },
   statValue: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: colors.text,
-    marginVertical: spacing.small,
+    fontSize: theme.typography.fontSize.xl,
+    fontWeight: 'bold' as FontWeight,
+    color: theme.colors.text,
+    marginVertical: theme.spacing.sm,
   },
   statLabel: {
-    fontSize: 14,
-    color: colors.textSecondary,
+    fontSize: theme.typography.fontSize.md,
+    color: theme.colors.textSecondary,
     textAlign: 'center',
+    fontWeight: '500' as FontWeight,
+  },
+  doctorActionButton: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 100,
+    ...shadows.md,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+  },
+  doctorProfileSection: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.lg,
+    marginBottom: theme.spacing.md,
+    ...shadows.sm,
   },
   actionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+    marginTop: theme.spacing.md,
   },
   actionCard: {
-    width: '48%',
-    backgroundColor: colors.surface,
-    borderRadius: 8,
-    padding: spacing.medium,
+    backgroundColor: theme.colors.background,
+    borderRadius: theme.borderRadius.md,
+    padding: theme.spacing.md,
     alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.medium,
-    minHeight: 100,
+    width: '48%',
+    marginBottom: theme.spacing.md,
+    ...shadows.sm,
+  },
+  actionText: {
+    fontSize: theme.typography.fontSize.sm,
+    color: theme.colors.text,
+    marginTop: theme.spacing.xs,
+    textAlign: 'center',
   },
   timeline: {
-    paddingLeft: spacing.small,
+    marginTop: theme.spacing.md,
   },
   timelineItem: {
     flexDirection: 'row',
-    marginBottom: spacing.large,
+    marginBottom: theme.spacing.md,
   },
   timelinePoint: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: colors.primary,
-    marginTop: 6,
-    marginRight: spacing.small,
+    backgroundColor: theme.colors.primary,
+    marginRight: theme.spacing.sm,
+    marginTop: theme.spacing.xs,
   },
   timelineContent: {
     flex: 1,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-    paddingBottom: spacing.small,
   },
   timelineTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: colors.text,
-    marginBottom: 4,
+    fontSize: theme.typography.fontSize.md,
+    fontWeight: '600' as FontWeight,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.xxs,
   },
   timelineDesc: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    marginBottom: 4,
+    fontSize: theme.typography.fontSize.sm,
+    color: theme.colors.textSecondary,
+    marginBottom: theme.spacing.xxs,
   },
   timelineTime: {
-    fontSize: 12,
-    color: colors.textTertiary,
-  },
-  
-  // Time slot picker styles
-  slotPickerContainer: {
-    width: '100%',
-    padding: spacing.medium,
-  },
-  slotPickerTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: spacing.medium,
-    color: colors.text,
-  },
-  slotGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  slotButton: {
-    width: '48%',
-    backgroundColor: colors.background,
-    borderWidth: 1,
-    borderColor: colors.primary,
-    borderRadius: 8,
-    paddingVertical: spacing.medium,
-    paddingHorizontal: spacing.small,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: spacing.medium,
-    minHeight: 48,
-  },
-  selectedSlotButton: {
-    backgroundColor: colors.primary,
-  },
-  slotText: {
-    color: colors.primary,
-    fontSize: 16,
-  },
-  selectedSlotText: {
-    color: colors.textInverted,
-  },
-  
-  // Extra utility
-  bottomPadding: {
-    height: 80,
-  },
-  chatContent: {
-    paddingBottom: 20,
+    fontSize: theme.typography.fontSize.xs,
+    color: theme.colors.textTertiary,
   },
 });
 
-export { theme };
+// Export shadows for external use
+export const sharedStyles = {
+  shadow: shadows.md,
+  lightShadow: shadows.sm,
+};
+// Container Styles
+export const containerStyles = StyleSheet.create({
+  chatContent: {
+    flex: 1,
+  },
+  baseContainer:{
+    flex: 1,
+  },
+  userTypeContainer: {
+    flexDirection: 'row',
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+  },
+  formContainer: {
+    flex: 1,
+  },
+  loginScrollContainer: {
+    flex: 1,
+    padding: theme.spacing.md,
+  },
+  logoContainer: {
+    flex: 1,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+  },
+  messageContainer: {
+    flex: 1,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+    padding: theme.spacing.md,
+  },
+  contentContainer: {
+    flex: 1,
+    padding: theme.spacing.md,
+  },
+  reportInfo: {
+    flexDirection: 'row'
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: theme.colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  actionContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.background,
+    ...sharedStyles.shadow,
+  },
+  sectionContainer: {
+    flex: 1,
+  }
+});
+
+
+export const appointmentCard = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.background,
+    borderRadius: theme.borderRadius.sm,
+    marginBottom: theme.spacing.sm,
+    ...sharedStyles.shadow,
+  },
+  appointmentInfo: {
+    flex: 1,
+    marginLeft: theme.spacing.md,
+  }
+});
+
+export const dashBoardStyle = StyleSheet.create({
+  dashboardContent: {
+    flex: 1,
+    padding: theme.spacing.md,
+  },
+  dashboardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: theme.spacing.md,
+  },
+  dashboardGreeting: {
+    fontSize: theme.typography.fontSize.xl,
+    fontWeight: 'bold',
+    color: theme.colors.text,
+  },
+  dashboardSubGreeting: {
+    fontSize: theme.typography.fontSize.md,
+    fontWeight: 'normal',
+    color: theme.colors.textSecondary,
+  },
+  dashboardTitle: {
+    fontSize: theme.typography.fontSize.xl,
+    fontWeight: 'bold',
+    color: theme.colors.text,
+  },
+  dashboardSubtitle: {
+    fontSize: theme.typography.fontSize.md,
+    fontWeight: 'normal',
+    color: theme.colors.textSecondary,
+  },
+  dashboardStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: theme.spacing.md,
+  },
+  dashboardStat: {
+    alignItems: 'center',
+  },
+})
+
+export const headerStyles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: theme.spacing.md,
+  },
+  container: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.background,
+  },
+  headerTitle: {
+    fontSize: theme.typography.fontSize.lg,
+    fontWeight: '600' as FontWeight,
+    color: theme.colors.text,
+  },
+  title: {
+    fontSize: theme.typography.fontSize.xxl,
+    fontWeight: 'bold',
+    color: theme.colors.text,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: theme.spacing.sm,
+  },
+  subtitle: {
+    fontSize: theme.typography.fontSize.md,
+    fontWeight: 'normal',
+    color: theme.colors.textSecondary,
+  },
+  profileHeader: {
+    alignItems: 'center',
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.background,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border,
+    ...sharedStyles.shadow
+  }
+});
+
+export const inputStyles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    borderRadius: theme.borderRadius.sm,
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.xs,
+    marginBottom: theme.spacing.sm,
+  },
+  input: {
+    flex: 1,
+    fontSize: theme.typography.fontSize.md,
+    color: theme.colors.text,
+  },
+  icon: {
+    marginLeft: theme.spacing.sm,
+  },
+});
+
+export const avatarStyles = StyleSheet.create({
+  container: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: theme.colors.background,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+  },
+  image: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+  },
+});
+
+export const badgeStyles = StyleSheet.create({
+  container: {
+    paddingHorizontal: theme.spacing.xs,
+    paddingVertical: theme.spacing.xxs,
+    borderRadius: theme.borderRadius.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  text: {
+    fontSize: theme.typography.fontSize.sm,
+    fontWeight: 'bold',
+    color: theme.colors.textInverted,
+  },
+  reviewedBadge:{
+    backgroundColor: theme.colors.primary,
+  },
+  pendingBadge:{
+    backgroundColor: theme.colors.secondary,
+  },
+  statusBadge:{
+    backgroundColor: theme.colors.primary,
+  },
+});
+
+export const chatStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: theme.spacing.md,
+  },
+  messageContainer: {
+    flex: 1,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: theme.spacing.sm,
+  },
+  input: {
+    flex: 1,
+    fontSize: theme.typography.fontSize.md,
+    color: theme.colors.text,
+    marginRight: theme.spacing.sm,
+  },
+  chat:{
+    flex: 1,
+  }
+});
+
+export const cardStyles = StyleSheet.create({
+  container: {
+    ...containerStyles.baseContainer,
+    borderRadius: theme.borderRadius.sm,
+    marginBottom: theme.spacing.sm,
+    ...sharedStyles.shadow,
+  },
+  title: {
+    fontSize: theme.typography.fontSize.lg,
+    fontWeight: 'bold' as const,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.sm,
+  },
+  appointmentCard:{
+    flexDirection: 'row',
+  },
+  reportCard:{
+    flexDirection: 'row',
+  }
+});
+
+// Profile image styles - used across both doctor and user profiles
+export const profileStyles = {
+  // Standard profile image (small)
+  profileImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: theme.colors.background,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+  },
+  
+  // Large profile image (for profile screens)
+  profileImageLarge: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: theme.colors.background,
+    borderWidth: 2,
+    borderColor: theme.colors.primary,
+    marginBottom: theme.spacing.md,
+  },
+  
+  // Profile header container
+  profileHeader: {
+    alignItems: 'center' as FlexAlignType,
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.lg,
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.md,
+    ...Platform.select({
+      ios: {
+        shadowColor: theme.colors.shadow,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 3,
+        shadowColor: theme.colors.shadow,
+      },
+    }),
+  },
+  
+  // Profile section container
+  profileSection: {
+    padding: theme.spacing.md,
+    marginBottom: theme.spacing.md,
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.md,
+    ...Platform.select({
+      ios: {
+        shadowColor: theme.colors.shadow,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 3,
+        shadowColor: theme.colors.shadow,
+      },
+    }),
+  },
+};
+
+// User-specific styles
+export const userStyles = StyleSheet.create({
+  // User profile specific styles
+  userInfo: {
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.md,
+    marginBottom: theme.spacing.md,
+    ...sharedStyles.shadow,
+  },
+});
+
+// Doctor-specific styles
+export const doctorStyles = StyleSheet.create({
+  // Doctor profile specific styles
+  doctorInfo: {
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.md,
+    marginBottom: theme.spacing.md,
+    ...sharedStyles.shadow,
+  },
+  
+  // Availability styles
+  availabilityItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: theme.spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border,
+  },
+});
+
+// Shared button styles for both user and doctor interfaces
+export const buttonStyles = StyleSheet.create({
+  // Primary action button
+  primary: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: theme.borderRadius.sm,
+    backgroundColor: theme.colors.primary,
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.md,
+  },
+
+  button: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.md,
+    borderRadius: theme.borderRadius.sm,
+    minHeight: 48,
+  },
+  primaryButton: {
+    backgroundColor: theme.colors.primary,
+  },
+  secondaryButton: {
+    backgroundColor: theme.colors.primaryLight,
+  },
+  outlineButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: theme.colors.primary,
+  },
+  fullWidth: {
+    width: '100%',
+  },
+  disabledButton: {
+    backgroundColor: theme.colors.disabled,
+    borderColor: theme.colors.disabled,
+  },
+  text: {
+    fontSize: theme.typography.fontSize.md,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  primaryText: {
+    color: theme.colors.textInverted,
+  },
+  secondaryText: {
+    color: theme.colors.primary,
+  },
+  outlineText: {
+    color: theme.colors.primary,
+  },
+  disabledText: {
+    color: theme.colors.textTertiary,
+  },
+  
+  // Secondary action button
+  secondary: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: theme.borderRadius.sm,
+    backgroundColor: theme.colors.secondary,
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.md,
+  },
+  
+  // Outline button
+  outline: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: theme.borderRadius.sm,
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: theme.colors.primary,
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.md,
+  },
+  
+  // Back button
+  backButton: {
+    padding: theme.spacing.xs,
+    marginRight: theme.spacing.sm,
+  },
+  
+  // Login button
+  loginButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: theme.borderRadius.sm,
+    backgroundColor: theme.colors.primary,
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.md,
+  },
+  
+  // Logout button
+  logoutButton: {
+    backgroundColor: theme.colors.error,
+    paddingVertical: theme.spacing.sm,
+    paddingHorizontal: theme.spacing.md,
+    borderRadius: theme.borderRadius.sm,
+    alignItems: 'center' as FlexAlignType,
+    marginTop: theme.spacing.lg,
+  },
+  
+  // Action button
+  actionButton: {
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.borderRadius.sm,
+    backgroundColor: theme.colors.primary,
+  },
+  
+  // Book appointment button
+  bookAppointmentButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: theme.borderRadius.sm,
+    backgroundColor: theme.colors.primary,
+    paddingHorizontal: theme.spacing.md,
+  },
+  
+  // Checkbox styles
+  checkbox: {
+    backgroundColor: theme.colors.primary,
+    borderRadius: 4,
+    width: 20,
+    height: 20,
+    marginRight: theme.spacing.xs,
+  },
+  
+  checkboxChecked: {
+    backgroundColor: theme.colors.primary,
+    borderRadius: 4,
+    width: 20,
+    height: 20,
+    marginRight: theme.spacing.xs,
+  },
+  
+  // Button text styles
+  buttonText: {
+    color: theme.colors.textInverted,
+    fontWeight: 'bold' as FontWeight,
+    fontSize: theme.typography.fontSize.md,
+  },
+  
+  // Secondary button text
+  secondaryButtonText: {
+    color: theme.colors.text,
+    fontSize: theme.typography.fontSize.sm,
+  },
+  
+  // Disabled button
+  disabled: {
+    backgroundColor: theme.colors.disabled,
+    opacity: 0.7,
+  },
+});
+
+// Text styles shared across the app
+export const textStyles = StyleSheet.create({
+  // Heading styles
+  h1: {
+    fontSize: theme.typography.fontSize.xxl,
+    fontWeight: 'bold' as FontWeight,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.md,
+  },
+  
+  h2: {
+    fontSize: theme.typography.fontSize.xl,
+    fontWeight: 'bold' as FontWeight,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.sm,
+  },
+  
+  h3: {
+    fontSize: theme.typography.fontSize.lg,
+    fontWeight: '600' as FontWeight,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.sm,
+  },
+  
+  // Body text styles
+  body: {
+    fontSize: theme.typography.fontSize.md,
+    color: theme.colors.text,
+    lineHeight: theme.typography.lineHeight.normal,
+  },
+  
+  bodySmall: {
+    fontSize: theme.typography.fontSize.sm,
+    color: theme.colors.textSecondary,
+  },
+  
+  // Section titles
+  sectionTitle: {
+    fontSize: theme.typography.fontSize.lg,
+    fontWeight: '600' as FontWeight,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.sm,
+  },
+  
+  // Name display
+  name: {
+    fontSize: theme.typography.fontSize.xl,
+    fontWeight: 'bold' as FontWeight,
+    color: theme.colors.text,
+    marginTop: theme.spacing.sm,
+    marginBottom: theme.spacing.xs,
+  },
+  
+  // Email display
+  email: {
+    fontSize: theme.typography.fontSize.md,
+    color: theme.colors.textSecondary,
+    marginBottom: theme.spacing.sm,
+  },
+  
+  // Specialty text
+  specialty: {
+    fontSize: theme.typography.fontSize.md,
+    color: theme.colors.textSecondary,
+    marginBottom: theme.spacing.sm,
+  },
+  
+  // Caption text
+  caption: {
+    fontSize: theme.typography.fontSize.sm,
+    color: theme.colors.textTertiary,
+  },
+  
+  // Small text
+  smallText: {
+    fontSize: theme.typography.fontSize.sm,
+    color: theme.colors.textSecondary,
+  },
+});

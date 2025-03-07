@@ -1,6 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, ViewStyle, TextStyle } from 'react-native';
 import { theme } from '../../styles/theme';
+import { buttonStyles, commonStyles } from 'src/styles/commonStyles';
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline';
 
@@ -30,26 +31,26 @@ const Button: React.FC<ButtonProps> = ({
   const getButtonStyle = () => {
     switch (variant) {
       case 'primary':
-        return styles.primaryButton;
+        return buttonStyles.primaryButton;
       case 'secondary':
-        return styles.secondaryButton;
+        return buttonStyles.secondaryButton;
       case 'outline':
-        return styles.outlineButton;
+        return buttonStyles.outlineButton;
       default:
-        return styles.primaryButton;
+        return buttonStyles.primaryButton;
     }
   };
 
   const getTextStyle = () => {
     switch (variant) {
       case 'primary':
-        return styles.primaryText;
+        return commonStyles.primaryText;
       case 'secondary':
-        return styles.secondaryText;
+        return textStyle.secondaryText;
       case 'outline':
-        return styles.outlineText;
+        return textStyle.outlineText;
       default:
-        return styles.primaryText;
+        return textStyle.primaryText;
     }
   };
 
@@ -59,7 +60,7 @@ const Button: React.FC<ButtonProps> = ({
         styles.button,
         getButtonStyle(),
         fullWidth && styles.fullWidth,
-        disabled && styles.disabledButton,
+        disabled && buttonStyles.disabledButton,
         style,
       ]}
       onPress={onPress}
@@ -76,9 +77,9 @@ const Button: React.FC<ButtonProps> = ({
           {icon && icon}
           <Text 
             style={[
-              styles.text, 
+                textStyle.text, 
               getTextStyle(), 
-              disabled && styles.disabledText,
+              disabled && textStyle.disabledText,
               icon ? { marginLeft: theme.spacing.xs } : null,
               textStyle
             ]}
@@ -91,51 +92,5 @@ const Button: React.FC<ButtonProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: theme.spacing.sm,
-    paddingHorizontal: theme.spacing.md,
-    borderRadius: theme.borderRadius.sm,
-    minHeight: 48,
-  },
-  primaryButton: {
-    backgroundColor: theme.colors.primary,
-  },
-  secondaryButton: {
-    backgroundColor: theme.colors.primaryLight,
-  },
-  outlineButton: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: theme.colors.primary,
-  },
-  fullWidth: {
-    width: '100%',
-  },
-  disabledButton: {
-    backgroundColor: theme.colors.disabled,
-    borderColor: theme.colors.disabled,
-  },
-  text: {
-    fontSize: theme.typography.fontSize.md,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  primaryText: {
-    color: theme.colors.textInverted,
-  },
-  secondaryText: {
-    color: theme.colors.primary,
-  },
-  outlineText: {
-    color: theme.colors.primary,
-  },
-  disabledText: {
-    color: theme.colors.textTertiary,
-  },
-});
 
 export default Button;

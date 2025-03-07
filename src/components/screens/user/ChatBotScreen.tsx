@@ -1,13 +1,16 @@
-import React, { useState, useEffect, useRef, ErrorInfo } from 'react';
-import { View, ScrollView, SafeAreaView, Animated, Easing, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import Header from '../../common/Header';
-import { colors, spacing, commonStyles } from '../../../styles/commonStyles';
-import Tts from 'react-native-tts';
+// React and React Native imports
+import React, { useState, useEffect, useRef, useCallback, memo } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, Animated, Easing } from 'react-native';
+
+// Third-party imports
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../../types/types';
+import { UserStackParamList } from '../../../types/types';
+
+// Local imports
 import { useChatContext } from '../../../context/ChatContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { chatStyles, commonStyles, containerStyles, sharedStyles, theme } from '../../../styles/commonStyles';
+import Header from '../../common/Header';
 
 type Message = {
   id: string;
@@ -17,15 +20,18 @@ type Message = {
   answeredOptions?: string[];
 };
 
-const TypingIndicator = () => {
-  const [dot1] = useState(new Animated.Value(0));
-  const [dot2] = useState(new Animated.Value(0));
-  const [dot3] = useState(new Animated.Value(0));
+// Typing animation component
+const TypingIndicator = memo(() => {
+  const [dots] = useState(() => [
+    new Animated.Value(0),
+    new Animated.Value(0),
+    new Animated.Value(0)
+  ]);
 
   useEffect(() => {
-    const animateDot = (dot: Animated.Value, delay: number) => {
+    const animations = dots.map((dot, index) =>
       Animated.sequence([
-        Animated.delay(delay),
+        Animated.delay(index * 200),
         Animated.loop(
           Animated.sequence([
             Animated.timing(dot, {
@@ -42,22 +48,27 @@ const TypingIndicator = () => {
             }),
           ])
         ),
-      ]).start();
-    };
+      ])
+    );
 
-    animateDot(dot1, 0);
-    animateDot(dot2, 200);
-    animateDot(dot3, 400);
-  }, []);
+    animations.forEach(animation => animation.start());
+
+    return () => {
+      dots.forEach(dot => dot.stopAnimation());
+    };
+  }, [dots]);
 
   return (
-    <View style={commonStyles.typingIndicator}>
-      {[dot1, dot2, dot3].map((dot, index) => (
+    <View style={[commonStyles.flexRow, commonStyles.centeredContent]}>
+      {dots.map((dot, index) => (
         <Animated.View
           key={index}
           style={[
-            commonStyles.typingDot,
+            commonStyles.statCard,
             {
+              width: 8,
+              height: 8,
+              marginHorizontal: 2,
               transform: [
                 {
                   translateY: dot.interpolate({
@@ -72,113 +83,25 @@ const TypingIndicator = () => {
       ))}
     </View>
   );
-};
+});
 
-class ErrorBoundary extends React.Component<{children: React.ReactNode}, {hasError: boolean}> {
-  constructor(props: {children: React.ReactNode}) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(error: Error) {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('ChatBotScreen error:', error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <View style={commonStyles.centeredContent}>
-          <Text style={commonStyles.errorText}>Something went wrong. Please try again later.</Text>
-        </View>
-      );
-    }
-
-    return this.props.children;
-  }
-}
+TypingIndicator.displayName = 'TypingIndicator';
 
 const ChatBotScreen = () => {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<UserStackParamList>>();
   const { addSymptom, generateReport } = useChatContext();
+  const scrollViewRef = useRef<ScrollView>(null);
 
-  // Initialize TTS with error handling
-  useEffect(() => {
-    try {
-      Tts.setDefaultLanguage('en-IN');
-      Tts.setDefaultVoice('com.apple.ttsbundle.Rishi-premium');
-      Tts.setDefaultRate(0.5);
-      Tts.setDefaultPitch(1.2);
-    } catch (error) {
-      console.error('TTS initialization failed:', error);
-    }
-  }, []);
-
-  // Speak message when bot sends it with error handling
-  const speakMessage = (message: string) => {
-    try {
-      Tts.stop();
-      Tts.speak(message);
-    } catch (error) {
-      console.error('TTS speech failed:', error);
-    }
-  };
-
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      text: "Hi! I'm your health assistant. Let's gather some information about how you're feeling. What symptoms are you experiencing?",
-      sender: 'bot',
-      suggestions: ['Headache', 'Fever', 'Cough', 'Fatigue', 'Nausea', 'Other']
-    }
-  ]);
-  const [loadingMessages, setLoadingMessages] = useState(true);
-
-  // Load messages from AsyncStorage on component mount
-  useEffect(() => {
-    const loadMessages = async () => {
-      try {
-        const cachedMessages = await AsyncStorage.getItem('chatMessages');
-        if (cachedMessages) {
-          setMessages(JSON.parse(cachedMessages));
-        }
-      } catch (error) {
-        console.error('Failed to load messages:', error);
-      } finally {
-        setLoadingMessages(false);
-      }
-    };
-
-    loadMessages();
-  }, []);
-
-  // Cache messages whenever they change
-  useEffect(() => {
-    const saveMessages = async () => {
-      try {
-        await AsyncStorage.setItem('chatMessages', JSON.stringify(messages));
-      } catch (error) {
-        console.error('Failed to save messages:', error);
-      }
-    };
-
-    saveMessages();
-  }, [messages]);
-
+  const [messages, setMessages] = useState<Message[]>([]);
   const [currentStage, setCurrentStage] = useState<'initial' | 'symptoms' | 'severity' | 'duration' | 'report'>('initial');
   const [isTyping, setIsTyping] = useState(false);
   const [selectedSuggestions, setSelectedSuggestions] = useState<{[key: string]: string}>({});
 
-  const scrollViewRef = useRef<ScrollView>(null);
-
   useEffect(() => {
     // Initial message with typing animation
     setIsTyping(true);
-    setTimeout(() => {
-      setMessages(prev => [{
+    const timer = setTimeout(() => {
+      setMessages([{
         id: '1',
         text: "Hi! I'm your health assistant. Let's gather some information about how you're feeling. What symptoms are you experiencing?",
         sender: 'bot',
@@ -186,198 +109,245 @@ const ChatBotScreen = () => {
       }]);
       setIsTyping(false);
     }, 1500);
+
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
     // Scroll to bottom whenever messages change
     if (scrollViewRef.current) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         scrollViewRef.current?.scrollToEnd({ animated: true });
       }, 100);
+      return () => clearTimeout(timer);
     }
   }, [messages, isTyping]);
 
-  const addBotMessage = (message: Omit<Message, 'id' | 'sender'>, initial: boolean = false) => {
-    if (initial) {
-      setMessages(prev => [...prev, {
-        id: Date.now().toString(),
-        sender: 'bot',
-        text: "Based on your responses, here's an initial analysis:",
-        suggestions: ['View Analysis']
-      }]);
-      return;
-    }
+  const addBotMessage = useCallback((message: Omit<Message, 'id' | 'sender'>) => {
     setIsTyping(true);
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setMessages(prev => [...prev, {
         id: Date.now().toString(),
         sender: 'bot',
         ...message
       }]);
-      speakMessage(message.text);
       setIsTyping(false);
     }, 1500);
-  };
+    return () => clearTimeout(timer);
+  }, []);
 
-  const clearCache = async () => {
-    try {
-      await AsyncStorage.removeItem('chatMessages');
-      setMessages([]);
-      setSelectedSuggestions({});
-    } catch (error) {
-      console.error('Failed to clear cache:', error);
-    }
-  };
-
-  const handleSuggestionPress = async (suggestion: string) => {
-    setIsTyping(true);
+  const handleSuggestionPress = useCallback(async (suggestion: string) => {
     const messageId = messages[messages.length - 1]?.id;
-    if (!messageId) return;
-
-    // Update selected suggestions and set typing state
-    setSelectedSuggestions(prev => ({
-      ...prev,
-      [messageId]: suggestion
-    }));
-
-    // Add user's selection to chat
-    setMessages(prev => {
-      const updatedMessages = [...prev];
-      const lastMessage = updatedMessages[updatedMessages.length - 1];
-      if (lastMessage?.suggestions) {
-        lastMessage.answeredOptions = [...(lastMessage.answeredOptions || []), suggestion];
-      }
-      
-      return [...updatedMessages, {
-        id: Date.now().toString(),
-        text: suggestion,
-        sender: 'user'
-      }];
-    });
-
-    // Handle View Analysis click
-    if (suggestion === 'View Analysis') {
-      const report = generateReport();
-      setIsTyping(false);
-      navigation.navigate('MedicalRecords', { report: report });
+    if (!messageId) {
+      addBotMessage({
+        text: "I'm sorry, there was an error processing your request. Please try again.",
+        suggestions: ['Start Over']
+      });
       return;
     }
 
-    // Show analysis button after two questions
-    if (messages.filter(m => m.sender === 'user').length === 1) {
-      addBotMessage({
-        text: "Based on your responses, here's an initial analysis:",
-        suggestions: ['View Analysis']
-      });
-    }
+    try {
+      // Update selected suggestions
+      setSelectedSuggestions(prev => ({
+        ...prev,
+        [messageId]: suggestion
+      }));
 
-    // Handle different conversation stages and set typing state
-    switch (currentStage) {
-      case 'initial':
-        addBotMessage({
-          text: `On a scale of 1-10, how severe is your ${suggestion.toLowerCase()}?`,
-          suggestions: ['1-3 (Mild)', '4-7 (Moderate)', '8-10 (Severe)']
-        });
-        setCurrentStage('severity');
-        break;
-
-      case 'severity':
-        addBotMessage({
-          text: "How long have you been experiencing this?",
-          suggestions: ['Today', '2-3 days', '1 week', 'More than a week']
-        });
-        setCurrentStage('duration');
-        break;
-
-      case 'duration':
-        addSymptom({
+      // Add user's selection to chat
+      setMessages(prev => {
+        const updatedMessages = [...prev];
+        const lastMessage = updatedMessages[updatedMessages.length - 1];
+        if (lastMessage?.suggestions) {
+          lastMessage.answeredOptions = [...(lastMessage.answeredOptions || []), suggestion];
+        }
+        
+        return [...updatedMessages, {
           id: Date.now().toString(),
-          name: messages[messages.length - 2].text,
-          severity: messages[messages.length - 2].text.startsWith('1-3') ? 2 : 
-                   messages[messages.length - 2].text.startsWith('4-7') ? 5 : 9,
-          duration: suggestion
-        });
+          text: suggestion,
+          sender: 'user'
+        }];
+      });
 
-        addBotMessage({
-          text: "Are you experiencing any other symptoms?",
-          suggestions: ['Yes', 'No, generate report']
-        }, true);
-        setCurrentStage('symptoms');
-        break;
-
-      case 'symptoms':
-        if (suggestion === 'Yes') {
-          addBotMessage({
-            text: "What other symptoms are you experiencing?",
-            suggestions: ['Headache', 'Fever', 'Cough', 'Fatigue', 'Nausea', 'Other']
-          });
-          setCurrentStage('initial');
-        } else {
+      // View Analysis click
+      if (suggestion === 'View Analysis') {
+        try {
           const report = generateReport();
-        addBotMessage({
-          text: "I've analyzed your symptoms and generated a report. What would you like to do?",
-          suggestions: report.shouldSeeDoctor ? 
-            ['View Report', 'Consult Doctor Now'] :
-            ['View Report', 'Consult Doctor (Optional)']
-        });
-          setIsTyping(false);
+          navigation.navigate('MedicalRecords', { report });
+          return;
+        } catch (error) {
           addBotMessage({
-            text: "I've analyzed your symptoms and generated a report. What would you like to do?",
-            suggestions: report.shouldSeeDoctor ? 
-              ['View Report', 'Consult Doctor Now'] :
-              ['View Report', 'Consult Doctor (Optional)']
+            text: "I'm sorry, there was an error generating your report. Please try again.",
+            suggestions: ['Start Over']
           });
-          setCurrentStage('report');
+          return;
         }
-        break;
+      }
 
-      case 'report':
-        if (suggestion.includes('Consult Doctor')) {
-          navigation.navigate('DoctorSearch');
-        } else {
-          navigation.navigate('MedicalRecords', { report: generateReport() });
-        }
-        // Always return to dashboard after completing flow
-        setTimeout(() => {
-          navigation.navigate('Dashboard');
-        }, 2000);
-        break;
+      // Handle different conversation stages
+      switch (currentStage) {
+        case 'initial':
+          addBotMessage({
+            text: `On a scale of 1-10, how severe is your ${suggestion.toLowerCase()}?`,
+            suggestions: ['1-3 (Mild)', '4-7 (Moderate)', '8-10 (Severe)']
+          });
+          setCurrentStage('severity');
+          break;
+
+        case 'severity':
+          addBotMessage({
+            text: "How long have you been experiencing this?",
+            suggestions: ['Today', '2-3 days', '1 week', 'More than a week']
+          });
+          setCurrentStage('duration');
+          break;
+
+        case 'duration':
+          try {
+            // Calculate the symptom name based on conversation flow
+            const symptomMessageIndex = messages.length - 4;
+            const symptomName = symptomMessageIndex >= 0 ? 
+                             messages[symptomMessageIndex].text : 
+                             'Symptom';
+            
+            // Calculate severity
+            const severityMessage = messages[messages.length - 2].text;
+            const severity = severityMessage.startsWith('1-3') ? 2 : 
+                          severityMessage.startsWith('4-7') ? 5 : 9;
+            
+            addSymptom({
+              id: Date.now().toString(),
+              name: symptomName,
+              severity: severity,
+              duration: suggestion
+            });
+
+            addBotMessage({
+              text: "Are you experiencing any other symptoms?",
+              suggestions: ['Yes', 'No, generate report']
+            });
+            setCurrentStage('symptoms');
+          } catch (error) {
+            addBotMessage({
+              text: "I'm sorry, there was an error processing your symptoms. Please try again.",
+              suggestions: ['Start Over']
+            });
+            setCurrentStage('initial');
+          }
+          break;
+
+        case 'symptoms':
+          if (suggestion === 'Yes') {
+            addBotMessage({
+              text: "What other symptoms are you experiencing?",
+              suggestions: ['Headache', 'Fever', 'Cough', 'Fatigue', 'Nausea', 'Other']
+            });
+            setCurrentStage('initial');
+          } else {
+            try {
+              const report = generateReport();
+              addBotMessage({
+                text: "I've analyzed your symptoms and generated a report. What would you like to do?",
+                suggestions: report.shouldSeeDoctor ? 
+                  ['View Report', 'Consult Doctor Now'] :
+                  ['View Report', 'Consult Doctor (Optional)']
+              });
+              setCurrentStage('report');
+            } catch (error) {
+              addBotMessage({
+                text: "I'm sorry, there was an error generating your report. Please try again.",
+                suggestions: ['Start Over']
+              });
+              setCurrentStage('initial');
+            }
+          }
+          break;
+
+        case 'report':
+          if (suggestion.includes('Consult Doctor')) {
+            navigation.navigate('DoctorSearch');
+          } else {
+            try {
+              navigation.navigate('MedicalRecords', { report: generateReport() });
+            } catch (error) {
+              addBotMessage({
+                text: "I'm sorry, there was an error accessing your medical records. Please try again.",
+                suggestions: ['Start Over']
+              });
+              setCurrentStage('initial');
+            }
+          }
+          break;
+      }
+    } catch (error) {
+      console.error('Error handling suggestion:', error);
+      addBotMessage({
+        text: "I'm sorry, there was an error processing your request. Please try again.",
+        suggestions: ['Start Over']
+      });
+      setCurrentStage('initial');
     }
-  };
+  }, [messages, currentStage, addBotMessage, addSymptom, generateReport, navigation]);
+
+  const renderMessage = useCallback((message: Message) => (
+    <View
+      key={message.id}
+      style={[
+        containerStyles.messageContainer,
+        sharedStyles.shadow,
+        message.sender === 'user' ? { alignSelf: 'flex-end' } : { alignSelf: 'flex-start' }
+      ]}
+    >
+      <Text style={[
+        commonStyles.bodyText,
+        message.sender === 'user' ? { color: theme.colors.textInverted } : { color: theme.colors.text }
+      ]}>
+        {message.text}
+      </Text>
+      
+      {message.suggestions && (
+        <View style={[commonStyles.flexRow, { flexWrap: 'wrap', marginTop: theme.spacing.sm }]}>
+          {message.suggestions.map((suggestion, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[
+                commonStyles.suggestionButton,
+                sharedStyles.shadow,
+                selectedSuggestions[message.id] && selectedSuggestions[message.id] !== suggestion && commonStyles.disabledButton
+              ]}
+              onPress={() => handleSuggestionPress(suggestion)}
+              disabled={!!selectedSuggestions[message.id]}
+            >
+              <Text style={[
+                commonStyles.smallText,
+                (message.answeredOptions?.includes(suggestion) || selectedSuggestions[message.id]) && commonStyles.disabledText
+              ]}>
+                {suggestion}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+    </View>
+  ), [handleSuggestionPress, selectedSuggestions]);
 
   return (
-    <ErrorBoundary>
-      <SafeAreaView style={commonStyles.safeArea}>
-        <View style={commonStyles.chatContainer}>
-          <Header title="AI Health Assistant" />
-          <ScrollView
-            ref={scrollViewRef}
-            contentContainerStyle={commonStyles.chatContent}
-            style={commonStyles.chat}
-          > 
-            {messages.map((message, index) => (
-              <View key={message.id} style={[
-                commonStyles.message,
-                message.sender === 'bot' ? commonStyles.botMessage : commonStyles.userMessage
-              ]}>
-                <Text style={commonStyles.messageText}>{message.text}</Text>
-                {message.suggestions && message.suggestions.map(suggestion => (
-                  <TouchableOpacity
-                    key={suggestion}
-                    style={commonStyles.suggestion}
-                    onPress={() => handleSuggestionPress(suggestion)}
-                  >
-                    <Text style={commonStyles.suggestionText}>{suggestion}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            ))}
-            {isTyping && <TypingIndicator />}
-          </ScrollView>
-        </View>
-      </SafeAreaView>
-    </ErrorBoundary>
+    <SafeAreaView style={commonStyles.safeArea}>
+      <Header title="AI Health Assistant" showBackButton={true} />
+      
+      <View style={commonStyles.container}>
+        <ScrollView
+          ref={scrollViewRef}
+          style={chatStyles.chat}
+          contentContainerStyle={containerStyles.chatContent}
+          showsVerticalScrollIndicator={false}
+        >
+          {messages.map(renderMessage)}
+          {isTyping && <TypingIndicator />}
+          <View style={{ paddingBottom: 20 }} />
+        </ScrollView>
+      </View>
+    </SafeAreaView>
   );
-}
+};
 
 export default ChatBotScreen;

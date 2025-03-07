@@ -1,112 +1,57 @@
-import React from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, TouchableOpacity, Text } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faHome, faSearch, faCalendarCheck, faUser } from '@fortawesome/free-solid-svg-icons';
+import { commonStyles } from '../../styles/commonStyles';
 import { theme } from '../../styles/theme';
+type TabName = 'home' | 'search' | 'appointments' | 'profile';
 
-const NavBar = () => {
-  const [activeTab, setActiveTab] = React.useState('home');
+interface NavBarProps {
+  onTabChange?: (tab: TabName) => void;
+  initialTab?: TabName;
+}
+
+const NavBar: React.FC<NavBarProps> = ({ onTabChange, initialTab = 'home' }) => {
+  const [activeTab, setActiveTab] = useState<TabName>(initialTab);
   
-  const handleTabPress = (tabName: string) => {
+  const handleTabPress = useCallback((tabName: TabName) => {
     setActiveTab(tabName);
-  };
+    onTabChange?.(tabName);
+  }, [onTabChange]);
   
+  const renderTab = useCallback((tabName: TabName, icon: any, label: string) => (
+    <TouchableOpacity 
+      style={commonStyles.navTabItem} 
+      onPress={() => handleTabPress(tabName)}
+      activeOpacity={0.7}
+      accessibilityRole="tab"
+      accessibilityState={{ selected: activeTab === tabName }}
+      accessibilityLabel={`${label} tab`}
+    >
+      <FontAwesomeIcon 
+        icon={icon} 
+        size={22} 
+        color={activeTab === tabName ? theme.colors.primary : theme.colors.textTertiary} 
+      />
+      <Text style={[
+        commonStyles.navTabLabel,
+        activeTab === tabName && commonStyles.activeNavTabLabel
+      ]}>{label}</Text>
+    </TouchableOpacity>
+  ), [activeTab, handleTabPress]);
+
   return (
-    <View style={styles.container}>
-      <TouchableOpacity 
-        style={styles.tabItem} 
-        onPress={() => handleTabPress('home')}
-        activeOpacity={0.7}
-      >
-        <FontAwesomeIcon 
-          icon={faHome} 
-          size={22} 
-          color={activeTab === 'home' ? theme.colors.primary : theme.colors.textTertiary} 
-        />
-        <Text style={[
-          styles.tabLabel,
-          activeTab === 'home' && styles.activeTabLabel
-        ]}>Home</Text>
-      </TouchableOpacity>
-      
-      <TouchableOpacity 
-        style={styles.tabItem} 
-        onPress={() => handleTabPress('search')}
-        activeOpacity={0.7}
-      >
-        <FontAwesomeIcon 
-          icon={faSearch} 
-          size={22} 
-          color={activeTab === 'search' ? theme.colors.primary : theme.colors.textTertiary} 
-        />
-        <Text style={[
-          styles.tabLabel,
-          activeTab === 'search' && styles.activeTabLabel
-        ]}>Search</Text>
-      </TouchableOpacity>
-      
-      <TouchableOpacity 
-        style={styles.tabItem} 
-        onPress={() => handleTabPress('appointments')}
-        activeOpacity={0.7}
-      >
-        <FontAwesomeIcon 
-          icon={faCalendarCheck} 
-          size={22} 
-          color={activeTab === 'appointments' ? theme.colors.primary : theme.colors.textTertiary} 
-        />
-        <Text style={[
-          styles.tabLabel,
-          activeTab === 'appointments' && styles.activeTabLabel
-        ]}>Appointments</Text>
-      </TouchableOpacity>
-      
-      <TouchableOpacity 
-        style={styles.tabItem} 
-        onPress={() => handleTabPress('profile')}
-        activeOpacity={0.7}
-      >
-        <FontAwesomeIcon 
-          icon={faUser} 
-          size={22} 
-          color={activeTab === 'profile' ? theme.colors.primary : theme.colors.textTertiary} 
-        />
-        <Text style={[
-          styles.tabLabel,
-          activeTab === 'profile' && styles.activeTabLabel
-        ]}>Profile</Text>
-      </TouchableOpacity>
+    <View 
+      style={commonStyles.navBarContainer}
+      accessibilityRole="tablist"
+      accessible={true}
+    >
+      {renderTab('home', faHome, 'Home')}
+      {renderTab('search', faSearch, 'Search')}
+      {renderTab('appointments', faCalendarCheck, 'Appointments')}
+      {renderTab('profile', faUser, 'Profile')}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    paddingVertical: theme.spacing.sm,
-    backgroundColor: theme.colors.background,
-    borderTopWidth: 1,
-    borderTopColor: theme.colors.border,
-    ...theme.shadows.sm
-  },
-  tabItem: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: theme.spacing.xs,
-    minWidth: 70,
-  },
-  tabLabel: {
-    fontSize: theme.typography.fontSize.xs,
-    color: theme.colors.textTertiary,
-    marginTop: theme.spacing.xxs,
-    fontWeight: '500', // Using explicit string value instead of theme value to match TypeScript fontWeight type
-  },
-  activeTabLabel: {
-    color: theme.colors.primary,
-    fontWeight: '600', // Using explicit string value to match TypeScript fontWeight type
-  },
-});
 
 export default NavBar;

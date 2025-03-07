@@ -4,9 +4,10 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../../types/types';
 import { AuthContext } from '../../context/AuthContext';
-import { commonStyles } from '../../styles/commonStyles';
+import { buttonStyles, commonStyles, containerStyles, sharedStyles, viewStyles } from '../../styles/commonStyles';
 import CustomInput from './CustomInput';
 import CustomButton from './CustomButton';
+import { textStyles } from 'src/styles/theme';
 
 const LoginScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<AuthStackParamList>>();
@@ -43,14 +44,14 @@ const LoginScreen = () => {
   };
 
   return (
-    <SafeAreaView style={commonStyles.safeArea}>
-      <ScrollView contentContainerStyle={commonStyles.loginScrollContainer}>
-        <View style={commonStyles.logoContainer}>
-          <Text style={commonStyles.appName}>Doc-X</Text>
-          <Text style={commonStyles.tagline}>Your Health, Our Priority</Text>
+    <SafeAreaView style={sharedStyles.safeArea}>
+      <ScrollView contentContainerStyle={containerStyles.loginScrollContainer}>
+        <View style={containerStyles.logoContainer}>
+          <Text style={textStyles.appName}>Doc-X</Text>
+          <Text style={textStyles.tagline}>Your Health, Our Priority</Text>
         </View>
 
-        <View style={commonStyles.formContainer}>
+        <View style={containerStyles.formContainer}>
           <CustomInput
             label="Email"
             placeholder="Enter your email"
@@ -68,14 +69,14 @@ const LoginScreen = () => {
           />
 
           <TouchableOpacity 
-            style={commonStyles.userTypeContainer}
+            style={containerStyles.userTypeContainer}
             onPress={() => setIsDoctor(!isDoctor)}
           >
-            <View style={commonStyles.checkboxContainer}>
-              <View style={[commonStyles.checkbox, isDoctor && commonStyles.checkboxChecked]}>
-                {isDoctor && <View style={commonStyles.checkboxInner} />}
+            <View style={containerStyles.checkboxContainer}>
+              <View style={[buttonStyles.checkbox, isDoctor && buttonStyles.checkboxChecked]}>
+                {isDoctor && <View/>}
               </View>
-              <Text style={commonStyles.userTypeText}>Login as Doctor</Text>
+              <Text style={textStyles.userTypeText}>Login as Doctor</Text>
             </View>
           </TouchableOpacity>
 
@@ -83,21 +84,21 @@ const LoginScreen = () => {
             title="Login"
             onPress={handleLogin}
             isLoading={isLoading}
-            style={commonStyles.loginButton}
+            style={buttonStyles.primary}
           />
 
           <TouchableOpacity 
-            style={commonStyles.forgotPasswordContainer}
+            style={containerStyles.forgotPasswordContainer}
             onPress={() => navigation.navigate('ForgotPassword')}
           >
-            <Text style={commonStyles.forgotPasswordText}>Forgot Password?</Text>
+            <Text style={textStyles.forgotPasswordText}>Forgot Password?</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={commonStyles.footer}>
-          <Text style={commonStyles.footerText}>Don't have an account?</Text>
+        <View>
+          <Text style={textStyles.footerText}>Don't have an account?</Text>
           <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-            <Text style={commonStyles.signUpText}>Sign Up</Text>
+            <Text style={textStyles.signUpText}>Sign Up</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

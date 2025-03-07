@@ -4,50 +4,55 @@ const { width, height } = Dimensions.get('window');
 
 // Theme configuration for the app
 export const theme = {
+  // Base theme configuration
+  mode: 'light',
+  roundness: 4,
   colors: {
-    primary: '#4299E1',
-    primaryDark: '#3182CE',
-    primaryLight: '#BEE3F8',
-    secondary: '#ED8936',
-    secondaryLight: '#FEEBC8',
+    // Primary brand colors
+    primary: '#0073EA',
+    primaryDark: '#005BB7',
+    primaryLight: '#E6F2FF',
+    secondary: '#F97316',
+    accent: '#6366F1',
+
+    // Interface colors
     background: '#FFFFFF',
-    card: '#F7FAFC',
-    surface: '#FFFFFF',
-    text: '#2D3748',
-    textSecondary: '#4A5568',
-    textTertiary: '#718096',
+    surface: '#F9FAFB',
+    card: '#F0F2F5',
+    text: '#111827',
+    textSecondary: '#4B5563',
+    textTertiary: '#9CA3AF',
     textInverted: '#FFFFFF',
-    border: '#E2E8F0',
-    notification: '#F56565',
-    success: '#48BB78',
-    warning: '#ECC94B',
-    error: '#F56565',
-    disabled: '#EDF2F7',
-    placeholder: '#A0AEC0',
-    typingDot: '#A0AEC0', // Add this line
-    botMessageBackground: '#E2E8F0', // Add this line
-    userMessageBackground: '#4299E1', // Add this line
-    suggestionBackground: '#EDF2F7', // Add this line
-    suggestionText: '#2D3748', // Add this line
-    errorText: '#F56565', // Add this line
+    border: '#E5E7EB',
+    divider: '#E5E7EB',
+    
+    // Feedback colors
+    error: '#EF4444',
+    success: '#10B981',
+    warning: '#F59E0B',
+    disabled: '#D1D5DB',
+
+    // Additional colors
+    lightText: '#A1A1A1',
+    shadow: '#000000',
+    typingDot: '#0073EA',
+    botMessageBackground: '#F9FAFB',
+    userMessageBackground: '#E6F2FF',
+    suggestionBackground: '#F9FAFB',
+    suggestionText: '#0073EA',
+    errorText: '#EF4444',
   },
+  
   spacing: {
-    xxs: 4,
-    xs: 8,
-    sm: 12,
+    xxs: 2,
+    xs: 4,
+    sm: 8,
     md: 16,
     lg: 24,
     xl: 32,
     xxl: 48,
   },
-  borderRadius: {
-    none: 0,
-    sm: 2,
-    md: 4,
-    lg: 8,
-    xl: 12,
-    full: 9999,
-  },
+  
   typography: {
     fontSize: {
       xs: 12,
@@ -56,97 +61,56 @@ export const theme = {
       lg: 18,
       xl: 20,
       xxl: 24,
-      xxxl: 30,
     },
     fontWeight: {
-      light: '300',
       normal: '400',
       medium: '500',
       semibold: '600',
       bold: '700',
-      extrabold: '800',
     },
     letterSpacing: {
-      tighter: -0.8,
-      tight: -0.4,
+      tight: -0.5,
       normal: 0,
-      wide: 0.4,
-      wider: 0.8,
+      wide: 0.5,
     },
     lineHeight: {
-      none: 1,
-      tight: 1.25,
       normal: 1.5,
-      loose: 2,
+      tight: 1.2,
+      loose: 1.8,
     },
   },
+  
   shadows: {
-    none: {},
-    xs: {
-      ...Platform.select({
-        ios: {
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.05,
-          shadowRadius: 1,
-        },
-        android: {
-          elevation: 1,
-        },
-      }),
-    },
     sm: {
-      ...Platform.select({
-        ios: {
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.05,
-          shadowRadius: 2,
-        },
-        android: {
-          elevation: 2,
-        },
-      }),
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 2,
+      elevation: 2,
     },
     md: {
-      ...Platform.select({
-        ios: {
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 3 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
-        },
-        android: {
-          elevation: 4,
-        },
-      }),
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
     },
     lg: {
-      ...Platform.select({
-        ios: {
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.15,
-          shadowRadius: 6,
-        },
-        android: {
-          elevation: 6,
-        },
-      }),
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.15,
+      shadowRadius: 8,
+      elevation: 5,
     },
-    xl: {
-      ...Platform.select({
-        ios: {
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 10 },
-          shadowOpacity: 0.2,
-          shadowRadius: 14,
-        },
-        android: {
-          elevation: 10,
-        },
-      }),
-    },
+  },
+  
+  borderRadius: {
+    xs: 2,
+    sm: 4,
+    md: 8,
+    lg: 12,
+    xl: 16,
+    full: 9999,
   },
   // Screen dimensions
   screen: {
@@ -161,13 +125,42 @@ export const theme = {
   },
 };
 
+export type Theme = typeof theme;
+
 // Component-specific styles
 export const textStyles = {
   h1: {
-    fontSize: theme.typography.fontSize.xxxl,
+    fontSize: theme.typography.fontSize.xxl,
     fontWeight: theme.typography.fontWeight.bold,
     color: theme.colors.text,
     marginBottom: theme.spacing.md,
+  },
+  userTypeText:{
+    fontSize: theme.typography.fontSize.sm,
+  },
+  label:{
+    fontSize: theme.typography.fontSize.sm,
+  },
+  tagline:{
+    fontSize: theme.typography.fontSize.sm,
+  },
+  input:{
+    fontSize: theme.typography.fontSize.md,
+  },
+  appName:{
+    fontSize: theme.typography.fontSize.xl,
+  },
+  errorText:{
+    fontSize: theme.typography.fontSize.xs,
+  },
+  titleText:{
+    fontSize: theme.typography.fontSize.xl,
+  },
+  sectionTitle:{
+    fontSize: theme.typography.fontSize.md,
+  },
+  actionText:{
+    fontSize: theme.typography.fontSize.sm,
   },
   h2: {
     fontSize: theme.typography.fontSize.xxl,

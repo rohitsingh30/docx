@@ -1,50 +1,45 @@
-import React from 'react';
-import { View, TextInput, Text, StyleSheet } from 'react-native';
-import { colors, spacing, typography, commonStyles } from '../../styles/commonStyles';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TextInputProps } from 'react-native';
+import { textStyles, theme } from 'src/styles/theme';
 
-interface CustomInputProps {
-  placeholder?: string;
-  value: string;
-  onChangeText: (text: string) => void;
-  secureTextEntry?: boolean;
-  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
-  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+interface CustomInputProps extends TextInputProps {
+  label: string;
   error?: string;
-  label?: string;
 }
 
-const CustomInput: React.FC<CustomInputProps> = ({
-  placeholder,
+const CustomInput: React.FC<CustomInputProps> = ({ 
+  label, 
+  error, 
   value,
   onChangeText,
-  secureTextEntry = false,
-  keyboardType = 'default',
-  autoCapitalize = 'none',
-  error,
-  label,
+  secureTextEntry,
+  keyboardType,
+  placeholder,
+  ...rest 
 }) => {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
-    <View style={styles.container}>
-      {label && <Text style={commonStyles.label}>{label}</Text>}
+    <View style={{ marginBottom: 16 }}>
+      <Text style={textStyles.label}>{label}</Text>
       <TextInput
-        placeholder={placeholder}
+        style={[
+          error ? textStyles.input : null,
+          isFocused ? { borderColor: theme.colors.primary } : null
+        ]}
         value={value}
         onChangeText={onChangeText}
         secureTextEntry={secureTextEntry}
         keyboardType={keyboardType}
-        autoCapitalize={autoCapitalize}
-        style={[commonStyles.input, error ? commonStyles.inputError : {}]}
+        placeholder={placeholder}
+        placeholderTextColor={theme.colors.textTertiary}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        {...rest}
       />
-      {error && <Text style={commonStyles.errorText}>{error}</Text>}
+      {error ? <Text style={textStyles.errorText}>{error}</Text> : null}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    marginBottom: spacing.medium,
-  }
-});
 
 export default CustomInput;

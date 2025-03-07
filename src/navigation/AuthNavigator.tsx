@@ -2,11 +2,11 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { AuthStackParamList } from '../types/types';
 
-// Import screens from their new location
+// Import LoginScreen from common instead of auth
 import LoginScreen from '../components/common/LoginScreen';
-import SignUpScreen from '../components/auth/SignUpScreen';
-import ForgotPasswordScreen from '../components/auth/ForgotPasswordScreen';
-import ResetPasswordScreen from '../components/auth/ResetPasswordScreen';
+import SignUpScreen from '../components/common/SignUpScreen';
+import ForgotPasswordScreen from '../components/common/ForgotPasswordScreen';
+import ResetPasswordScreen from '../components/common/ResetPasswordScreen';
 
 const Stack = createStackNavigator<AuthStackParamList>();
 

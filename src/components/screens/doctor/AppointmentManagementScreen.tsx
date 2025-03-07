@@ -1,10 +1,15 @@
+// React and React Native imports
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
+
+// Third-party imports
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { DoctorStackParamList } from '../../../types/NavigationTypes';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { colors, spacing, commonStyles } from '../../../styles/commonStyles';
+
+// Local imports
+import { DoctorStackParamList } from '../../../types/types';
+import { theme, commonStyles, sharedStyles } from '../../../styles/commonStyles';
 import Header from '../../common/Header';
 
 const AppointmentManagementScreen = () => {
@@ -14,42 +19,52 @@ const AppointmentManagementScreen = () => {
     <SafeAreaView style={commonStyles.safeArea}>
       <Header title="Appointments" />
       
-      <ScrollView style={commonStyles.container}>
-        <View style={{ padding: spacing.medium }}>
+      <ScrollView style={commonStyles.scrollView}>
+        <View style={commonStyles.contentContainer}>
           {/* Today's Appointments */}
-          <View style={[commonStyles.sectionContainer, { marginBottom: spacing.large }]}>
-            <Text style={[commonStyles.titleText, { marginBottom: spacing.medium }]}>Today's Appointments</Text>
+          <View style={[commonStyles.sectionContainer, sharedStyles.shadow]}>
+            <Text style={commonStyles.titleText}>Today's Appointments</Text>
             <TouchableOpacity 
-              style={[commonStyles.listItem, { marginBottom: spacing.small }]}
-              onPress={() => {}}
+              style={[commonStyles.listItem, sharedStyles.shadow]}
+              onPress={() => navigation.navigate('AppointmentDetail', { appointmentId: '1' })}
+              accessibilityRole="button"
+              accessibilityLabel="View appointment with John Smith"
             >
-              <View style={{ flex: 1 }}>
-                <Text style={commonStyles.bodyText}>John Smith</Text>
-                <Text style={commonStyles.smallText}>10:00 AM - General Checkup</Text>
+              <View style={commonStyles.flexRow}>
+                <View style={{ flex: 1 }}>
+                  <Text style={commonStyles.bodyText}>John Smith</Text>
+                  <Text style={commonStyles.smallText}>10:00 AM - General Checkup</Text>
+                </View>
+                <Icon name="video-camera" size={16} color={theme.colors.primary} />
               </View>
-              <Icon name="video-camera" size={16} color={colors.primary} />
             </TouchableOpacity>
           </View>
 
           {/* Upcoming Appointments */}
-          <View style={commonStyles.sectionContainer}>
-            <Text style={[commonStyles.titleText, { marginBottom: spacing.medium }]}>Upcoming Appointments</Text>
+          <View style={[commonStyles.sectionContainer, sharedStyles.shadow]}>
+            <Text style={commonStyles.titleText}>Upcoming Appointments</Text>
             <TouchableOpacity 
-              style={[commonStyles.listItem, { marginBottom: spacing.small }]}
-              onPress={() => {}}
+              style={[commonStyles.listItem, sharedStyles.shadow]}
+              onPress={() => navigation.navigate('AppointmentDetail', { appointmentId: '2' })}
+              accessibilityRole="button"
+              accessibilityLabel="View appointment with Sarah Johnson"
             >
-              <View style={{ flex: 1 }}>
-                <Text style={commonStyles.bodyText}>Sarah Johnson</Text>
-                <Text style={commonStyles.smallText}>Tomorrow, 2:30 PM - Follow-up</Text>
+              <View style={commonStyles.flexRow}>
+                <View style={{ flex: 1 }}>
+                  <Text style={commonStyles.bodyText}>Sarah Johnson</Text>
+                  <Text style={commonStyles.smallText}>Tomorrow, 2:30 PM - Follow-up</Text>
+                </View>
+                <Icon name="calendar" size={16} color={theme.colors.primary} />
               </View>
-              <Icon name="calendar" size={16} color={colors.primary} />
             </TouchableOpacity>
           </View>
 
           {/* Action Button */}
           <TouchableOpacity 
-            style={[commonStyles.primaryButton, { marginTop: spacing.large }]}
+            style={[commonStyles.primaryButton, sharedStyles.shadow]}
             onPress={() => navigation.navigate('AvailabilitySettings')}
+            accessibilityRole="button"
+            accessibilityLabel="Manage availability settings"
           >
             <Text style={commonStyles.primaryButtonText}>Manage Availability</Text>
           </TouchableOpacity>

@@ -1,32 +1,23 @@
 import React, { useContext } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { AuthContext } from '../../context/AuthContext';
+import { colors, commonStyles } from '../../styles/commonStyles';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const authContext = useContext(AuthContext);
+  const { user, isLoading } = useContext(AuthContext);
 
-  if (!authContext) {
+  if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Auth context is not available</Text>
-      </View>
-    );
-  }
-
-  const { user, loading } = authContext;
-
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" />
+      <View style={commonStyles.centeredContent}>
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
 
   if (!user) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Please login to access this page</Text>
+      <View style={commonStyles.centeredContent}>
+        <Text style={commonStyles.bodyText}>Please login to access this page</Text>
       </View>
     );
   }

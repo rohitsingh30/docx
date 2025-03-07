@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useMemo, useCallback } from 'react';
 import { Symptom, HealthReport } from '../types/types';
 
 type ChatContextType = {
@@ -13,42 +13,71 @@ export const ChatContext = createContext<ChatContextType | undefined>(undefined)
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [symptoms, setSymptoms] = useState<Symptom[]>([]);
 
-  const addSymptom = (symptom: Symptom) => {
+  const addSymptom = useCallback((symptom: Symptom) => {
+    if (!symptom.name || symptom.severity < 0 || symptom.severity > 10) {
+      throw new Error('Invalid symptom data');
+    }
     setSymptoms(prev => [...prev, symptom]);
-  };
+  }, []);
 
-  const clearSymptoms = () => {
+  const clearSymptoms = useCallback(() => {
     setSymptoms([]);
-  };
+  }, []);
 
-  // Mock AI response generation
-  const generateReport = (): HealthReport => {
-    const shouldSeeDoctor = symptoms.some(s => s.severity > 7);
+  const generateReport = useCallback((): HealthReport => {
+    if (symptoms.length === 0) {
+      return {
+        title: 'Health Report',
+        symptoms: [],
+        possibleConditions: [],
+        recommendations: ['No symptoms reported'],
+        shouldSeeDoctor: false
+      };
+    }
+
+    const shouldSeeDoctor = symptoms.some(s => 
+      s.severity > 7 || 
+      (s.severity > 5 && s.duration === 'More than a week')
+    );
     
-    // This is where you'd integrate with a real AI model
+    const uniqueSymptoms = Array.from(new Set(symptoms.map(s => s.name)));
+    const severityLevel = Math.max(...symptoms.map(s => s.severity));
+    
+    const recommendations = [
+      'Rest and monitor symptoms',
+      'Stay hydrated',
+      severityLevel > 3 ? 'Take over-the-counter medication if needed' : 'Continue normal activities',
+      shouldSeeDoctor ? 'Consult a doctor immediately' : 'Monitor symptoms for 24-48 hours'
+    ];
+
+    if (symptoms.some(s => s.duration === 'More than a week')) {
+      recommendations.push('Consider keeping a symptom diary');
+    }
+
     const report: HealthReport = {
-      title: symptoms[0]?.name ? `${symptoms[0].name} Report` : 'Health Report',
+      title: uniqueSymptoms.length === 1 ? 
+        `${uniqueSymptoms[0]} Report` : 
+        `Health Report (${uniqueSymptoms.length} symptoms)`,
       symptoms,
-      possibleConditions: symptoms.map(s => `Possible condition related to ${s.name}`),
-      recommendations: [
-        'Rest and monitor symptoms',
-        'Stay hydrated',
-        'Take over-the-counter medication if needed',
-        shouldSeeDoctor ? 'Consult a doctor immediately' : 'Monitor symptoms for 24-48 hours'
-      ],
+      possibleConditions: uniqueSymptoms.map(name => 
+        `Possible condition related to ${name.toLowerCase()}`
+      ),
+      recommendations,
       shouldSeeDoctor
     };
 
     return report;
-  };
+  }, [symptoms]);
+
+  const contextValue = useMemo(() => ({
+    symptoms,
+    addSymptom,
+    clearSymptoms,
+    generateReport,
+  }), [symptoms, addSymptom, clearSymptoms, generateReport]);
 
   return (
-    <ChatContext.Provider value={{
-      symptoms,
-      addSymptom,
-      clearSymptoms,
-      generateReport,
-    }}>
+    <ChatContext.Provider value={contextValue}>
       {children}
     </ChatContext.Provider>
   );

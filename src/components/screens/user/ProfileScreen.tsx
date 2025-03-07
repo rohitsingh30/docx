@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
-import { styles } from '../../../screens/profile/styles/ProfileScreenStyles';
+import { styles } from '../../../styles/ProfileScreenStyles'; // Fixed import path
 
 const ProfileScreen = () => {
   return (

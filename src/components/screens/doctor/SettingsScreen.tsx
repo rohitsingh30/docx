@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Switch } from 'react-native';
-import { styles } from './styles/SettingsScreenStyles';
+import { styles } from '../../../styles/SettingsScreenStyles'; // Fixed import path
 
 const SettingsScreen = () => {
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);

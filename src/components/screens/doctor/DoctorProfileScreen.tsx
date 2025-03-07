@@ -1,10 +1,15 @@
+// React and React Native imports
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ImageStyle } from 'react-native';
+
+// Third-party imports
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
+
+// Local imports
 import { Doctor, RootStackParamList } from '../../../types/types';
-import { colors, spacing, commonStyles } from '../../../styles/commonStyles';
+import { commonStyles, headerStyles, sharedStyles, textStyles, theme } from '../../../styles/commonStyles';
 
 type DoctorProfileRouteProp = RouteProp<RootStackParamList, 'DoctorProfile'>;
 
@@ -44,26 +49,30 @@ const DoctorProfileScreen = () => {
 
   return (
     <View style={commonStyles.container}>
-      <View style={styles.profileHeader}>
+      <View style={headerStyles.profileHeader}>
         <Image 
           source={{ uri: doctor.image }}
-          style={styles.profileImage}
+          style={commonStyles.profileImage as ImageStyle}
+          accessibilityRole="image"
+          accessibilityLabel={`Profile picture of ${doctor.name}`}
         />
-        <Text style={styles.name}>{doctor.name}</Text>
-        <Text style={styles.specialty}>{doctor.specialty}</Text>
-        <View style={styles.ratingContainer}>
-          <Text style={styles.rating}>⭐ {doctor.rating}</Text>
-          <Text style={styles.experience}>{doctor.experience}</Text>
+        <Text style={textStyles.name}>{doctor.name}</Text>
+        <Text style={textStyles.specialty}>{doctor.specialty}</Text>
+        <View style={commonStyles.flexRow}>
+          <Text style={textStyles.rating}>⭐ {doctor.rating}</Text>
+          <Text style={textStyles.experience}>{doctor.experience}</Text>
         </View>
       </View>
-      <View style={styles.details}>
-        <Text style={styles.sectionTitle}>About</Text>
-        <Text style={styles.description}>{doctor.about}</Text>
+      <View style={commonStyles.sectionContainer}>
+        <Text style={textStyles.sectionTitle}>About</Text>
+        <Text style={textStyles.description}>{doctor.about}</Text>
         <TouchableOpacity 
-          style={commonStyles.primaryButton}
+          style={[commonStyles.primaryButton, sharedStyles.shadow]}
           onPress={() => navigation.navigate('AppointmentBooking', {
             doctor: doctor as unknown as Doctor,
           })}
+          accessibilityRole="button"
+          accessibilityLabel="Book appointment with this doctor"
         >
           <Text style={commonStyles.primaryButtonText}>Book Appointment</Text>
         </TouchableOpacity>
@@ -71,58 +80,5 @@ const DoctorProfileScreen = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  profileHeader: {
-    alignItems: 'center',
-    marginBottom: spacing.large,
-  },
-  profileImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    marginBottom: spacing.medium,
-  },
-  name: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: colors.text,
-    marginBottom: spacing.xxs,
-  },
-  specialty: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    marginBottom: spacing.xs,
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing.medium,
-  },
-  rating: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    marginRight: spacing.medium,
-  },
-  experience: {
-    fontSize: 16,
-    color: colors.textSecondary,
-  },
-  details: {
-    flex: 1,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: colors.text,
-    marginBottom: spacing.xs,
-  },
-  description: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    lineHeight: 24,
-    marginBottom: spacing.large,
-  },
-});
 
 export default DoctorProfileScreen;

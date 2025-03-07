@@ -1,97 +1,54 @@
-import React, { useContext } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import React from 'react';
+import { View, Text } from 'react-native';
 import BackButton from './BackButton';
-import { theme, colors, spacing, commonStyles } from '../../styles/commonStyles';
-import { AuthContext } from '../../context/AuthContext';
+import { commonStyles, headerStyles } from '../../styles/commonStyles';
 
 interface HeaderProps {
   title: string;
   showBackButton?: boolean;
   alignTitle?: 'left' | 'center' | 'right';
   rightComponent?: React.ReactNode;
-  gradient?: boolean;
+  testID?: string;
 }
 
 const Header: React.FC<HeaderProps> = ({ 
   title, 
-  showBackButton = true, 
-  alignTitle = 'left',
+  showBackButton = false, 
+  alignTitle = 'center',
   rightComponent,
-  gradient = false
+  testID = 'header'
 }) => {
-  const authContext = useContext(AuthContext);
-
-  if (!authContext) {
-    return null;
-  }
-
-  const { user } = authContext;
-
-  const gradientProps = gradient ? {
-    colors: [colors.primary, colors.primaryDark],
-    start: { x: 0, y: 0 },
-    end: { x: 1, y: 0 }
-  } : {};
-
   return (
-    <>
-      <View style={styles.leftContainer}>
+    <View 
+      style={headerStyles.container}
+      testID={testID}
+      accessibilityRole="header"
+      accessible={true}
+    >
+      <View style={commonStyles.flexRow}>
         {showBackButton && <BackButton />}
       </View>
       
-      <Text style={[
-        styles.title,
-        alignTitle === 'right' && styles.rightAligned,
-        alignTitle === 'center' && styles.centerAligned,
-        gradient && styles.gradientTitle
-      ]}>
+      <Text 
+        style={[
+          headerStyles.title,
+          alignTitle === 'right' && { alignSelf: 'flex-end' },
+          alignTitle === 'center' && { alignSelf: 'center' }
+        ]}
+        accessibilityRole="header"
+        accessibilityLabel={title}
+        accessible={true}
+        numberOfLines={1}
+        ellipsizeMode="tail"
+      >
         {title}
       </Text>
       
-      <View style={styles.rightContainer}>
+      <View style={commonStyles.headerRight}>
         {rightComponent}
       </View>
-    </>
+    </View>
   );
 };
-
-const styles = StyleSheet.create({
-  header: {
-    height: 64,
-    zIndex: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.medium,
-  },
-  leftContainer: {
-    width: 40,
-    alignItems: 'flex-start',
-  },
-  title: {
-    fontSize: theme.typography.fontSize.xl,
-    fontWeight: 'bold',
-    color: colors.primaryDark,
-    flex: 1,
-    letterSpacing: theme.typography.letterSpacing.tight,
-  },
-  gradientTitle: {
-    color: colors.textInverted,
-    textShadowColor: 'rgba(0, 0, 0, 0.2)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2
-  },
-  centerAligned: {
-    textAlign: 'center',
-  },
-  rightAligned: {
-    textAlign: 'right',
-  },
-  rightContainer: {
-    width: 40,
-    alignItems: 'flex-end',
-  }
-});
 
 export default Header;

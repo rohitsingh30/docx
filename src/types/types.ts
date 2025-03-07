@@ -105,7 +105,7 @@ export type UserStackParamList = {
   AppointmentBooking: { doctor?: Doctor };
   AppointmentConfirmation: { appointmentId: string };
   AppointmentList: undefined;
-  AppointmentDetail: { appointmentId: string };
+  AppointmentDetail: { appointmentId: string,date:string ,time:string  };
   MedicalRecords: { report?: HealthReport };
   ReportDetail: { reportId: string; isReviewed?: boolean };
   Profile: undefined;
@@ -134,9 +134,9 @@ export type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export type NavigationScreenProps = {
   auth: {
     Login: typeof import('../components/common/LoginScreen').default;
-    SignUp: typeof import('../components/auth/SignUpScreen').default;
-    ForgotPassword: typeof import('../components/auth/ForgotPasswordScreen').default;
-    ResetPassword: typeof import('../components/auth/ResetPasswordScreen').default;
+    SignUp: typeof import('../components/common/SignUpScreen').default;
+    ForgotPassword: typeof import('../components/common/ForgotPasswordScreen').default;
+    ResetPassword: typeof import('../components/common/ResetPasswordScreen').default;
   };
   user: {
     Dashboard: typeof import('../components/screens/user/DashboardScreen').default;
